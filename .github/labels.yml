@@ -1,0 +1,47 @@
+- name: "♻️ refactor"
+  color: "a371f7"
+  description: "코드 리팩토링"
+
+- name: "⚙️ setting"
+  color: "1f883d"
+  description: "설정 관련 변경 (CI/CD, 환경설정 등)"
+
+- name: "⚡ performance"
+  color: "fbca04"
+  description: "성능 개선"
+
+- name: "✅ test"
+  color: "0e8a16"
+  description: "테스트"
+
+- name: "✨ feature"
+  color: "1d76db"
+  description: "새로운 기능"
+
+- name: "🚀 Deploy"
+  color: "5319e7"
+  description: "배포 관련"
+
+- name: "🎨 style"
+  color: "cfd3d7"
+  description: "코드 스타일 변경"
+
+- name: "🐛 bug"
+  color: "d73a4a"
+  description: "버그 리포트"
+
+- name: "📚 docs"
+  color: "0075ca"
+  description: "문서 작업"
+
+- name: "🧹 chore"
+  color: "eeeeee"
+  description: "기타 변경 (빌드 스크립트, 패키지 등)"
+
+- name: "🔧 fix"
+  color: "b60205"
+  description: "코드 수정"
+
+- name: "🌗 Kyeom"
+  color: "e4e669"
+  description: "작업자 - 장동겸"
