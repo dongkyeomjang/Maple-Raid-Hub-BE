@@ -1,13 +1,14 @@
 package com.mapleraid.security.application.service;
 
-import com.mapleraid.application.port.out.UserRepository;
 import com.mapleraid.core.utility.JsonWebTokenUtil;
-import com.mapleraid.domain.user.User;
 import com.mapleraid.security.application.dto.OauthJsonWebTokenDto;
-import com.mapleraid.security.application.usecase.LoginOauthUseCase;
-import com.mapleraid.security.domain.type.ESecurityRole;
+import com.mapleraid.security.application.port.in.usecase.LoginOauthUseCase;
 import com.mapleraid.security.info.CustomTemporaryUserPrincipal;
 import com.mapleraid.security.info.CustomUserPrincipal;
+import com.mapleraid.security.type.ESecurityRole;
+import com.mapleraid.user.application.port.out.UserRepository;
+import com.mapleraid.user.domain.User;
+import com.mapleraid.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ public class LoginOauthService implements LoginOauthUseCase {
     public OauthJsonWebTokenDto execute(CustomUserPrincipal principal) {
         // 기존 사용자: access + refresh 토큰 발급
         User user = userRepository.findById(
-                com.mapleraid.domain.user.UserId.of(principal.getId())
+                UserId.of(principal.getId())
         ).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         // 로그인 기록

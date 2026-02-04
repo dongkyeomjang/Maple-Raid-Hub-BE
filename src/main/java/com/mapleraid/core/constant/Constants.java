@@ -4,6 +4,10 @@ import java.util.List;
 
 public class Constants {
 
+    public static final int MIN_CHARACTER_LEVEL = 260;
+
+    public static final int DAILY_CHALLENGE_LIMIT = 5;
+
     // JWT
     public static String ACCOUNT_ID_ATTRIBUTE_NAME = "ACCOUNT_ID";
     public static String ACCOUNT_ID_CLAIM_NAME = "aid";

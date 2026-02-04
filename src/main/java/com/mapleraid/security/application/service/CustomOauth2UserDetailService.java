@@ -1,12 +1,12 @@
 package com.mapleraid.security.application.service;
 
-import com.mapleraid.application.port.out.UserRepository;
-import com.mapleraid.domain.user.User;
-import com.mapleraid.security.domain.type.ESecurityProvider;
 import com.mapleraid.security.info.CustomTemporaryUserPrincipal;
 import com.mapleraid.security.info.CustomUserPrincipal;
 import com.mapleraid.security.info.factory.Oauth2UserInfo;
 import com.mapleraid.security.info.factory.Oauth2UserInfoFactory;
+import com.mapleraid.security.type.ESecurityProvider;
+import com.mapleraid.user.application.port.out.UserRepository;
+import com.mapleraid.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;

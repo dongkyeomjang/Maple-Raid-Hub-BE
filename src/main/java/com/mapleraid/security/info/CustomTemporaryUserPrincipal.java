@@ -1,6 +1,6 @@
 package com.mapleraid.security.info;
 
-import com.mapleraid.security.domain.type.ESecurityProvider;
+import com.mapleraid.security.type.ESecurityProvider;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

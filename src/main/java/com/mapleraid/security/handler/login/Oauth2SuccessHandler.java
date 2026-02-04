@@ -3,7 +3,7 @@ package com.mapleraid.security.handler.login;
 import com.mapleraid.core.constant.Constants;
 import com.mapleraid.core.utility.HttpServletUtil;
 import com.mapleraid.security.application.dto.OauthJsonWebTokenDto;
-import com.mapleraid.security.application.usecase.LoginOauthUseCase;
+import com.mapleraid.security.application.port.in.usecase.LoginOauthUseCase;
 import com.mapleraid.security.info.CustomTemporaryUserPrincipal;
 import com.mapleraid.security.info.CustomUserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
