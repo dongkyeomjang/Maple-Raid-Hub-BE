@@ -1,14 +1,16 @@
 package com.mapleraid.security.config;
 
-import com.mapleraid.application.port.out.UserRepository;
 import com.mapleraid.core.constant.Constants;
 import com.mapleraid.core.utility.JsonWebTokenUtil;
 import com.mapleraid.security.application.service.CustomOauth2UserDetailService;
+import com.mapleraid.security.filter.ExceptionFilter;
+import com.mapleraid.security.filter.GlobalLoggerFilter;
 import com.mapleraid.security.filter.JsonWebTokenAuthenticationFilter;
 import com.mapleraid.security.handler.common.DefaultAccessDeniedHandler;
 import com.mapleraid.security.handler.common.DefaultAuthenticationEntryPoint;
 import com.mapleraid.security.handler.login.Oauth2FailureHandler;
 import com.mapleraid.security.handler.login.Oauth2SuccessHandler;
+import com.mapleraid.user.application.port.out.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -46,8 +48,8 @@ public class SecurityConfig {
     @Value("${cookie.refresh-token-name:refresh_token}")
     private String refreshTokenCookieName;
 
-    @Value("${jwt.access-token-validity-ms}")
-    private Long accessTokenValidityMs;
+    @Value("${jwt.refresh-token-validity-ms}")
+    private Long cookieMaxAge;
 
     @Bean
     @Profile("!local")
@@ -80,10 +82,21 @@ public class SecurityConfig {
                                 cookieDomain,
                                 accessTokenCookieName,
                                 refreshTokenCookieName,
-                                accessTokenValidityMs
+                                cookieMaxAge
                         ),
                         LogoutFilter.class
                 )
+
+                .addFilterBefore(
+                        new ExceptionFilter(),
+                        JsonWebTokenAuthenticationFilter.class
+                )
+
+                .addFilterBefore(
+                        new GlobalLoggerFilter(),
+                        ExceptionFilter.class
+                )
+
                 .getOrBuild();
     }
 
@@ -120,10 +133,21 @@ public class SecurityConfig {
                                 cookieDomain,
                                 accessTokenCookieName,
                                 refreshTokenCookieName,
-                                accessTokenValidityMs
+                                cookieMaxAge
                         ),
                         LogoutFilter.class
                 )
+
+                .addFilterBefore(
+                        new ExceptionFilter(),
+                        JsonWebTokenAuthenticationFilter.class
+                )
+
+                .addFilterBefore(
+                        new GlobalLoggerFilter(),
+                        ExceptionFilter.class
+                )
+
                 .getOrBuild();
     }
 }

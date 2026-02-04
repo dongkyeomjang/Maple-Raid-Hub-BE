@@ -21,8 +21,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class Oauth2FailureHandler implements AuthenticationFailureHandler {
 
-    private final ObjectMapper objectMapper;
-
     // 예상 가능한 OAuth2 에러 코드 (스택트레이스 없이 WARN으로 로깅)
     private static final Set<String> EXPECTED_OAUTH2_ERRORS = Set.of(
             "authorization_request_not_found",
@@ -30,6 +28,7 @@ public class Oauth2FailureHandler implements AuthenticationFailureHandler {
             "invalid_user_info_response",
             "access_denied"
     );
+    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,

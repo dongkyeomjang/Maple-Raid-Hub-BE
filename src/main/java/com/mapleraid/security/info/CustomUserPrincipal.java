@@ -1,7 +1,7 @@
 package com.mapleraid.security.info;
 
-import com.mapleraid.domain.user.User;
-import com.mapleraid.security.domain.type.ESecurityRole;
+import com.mapleraid.security.type.ESecurityRole;
+import com.mapleraid.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class CustomUserPrincipal implements UserDetails, OAuth2User {
         return CustomUserPrincipal.builder()
                 .id(user.getId().getValue())
                 .role(ESecurityRole.USER)
-                .password(user.getPassword())
+                .password(user.getPasswordHash())
                 .attributes(Collections.emptyMap())
                 .authorities(Collections.singleton(new SimpleGrantedAuthority(ESecurityRole.USER.getSecurityName())))
                 .build();
@@ -41,7 +41,7 @@ public class CustomUserPrincipal implements UserDetails, OAuth2User {
         return CustomUserPrincipal.builder()
                 .id(user.getId().getValue())
                 .role(ESecurityRole.USER)
-                .password(user.getPassword())
+                .password(user.getPasswordHash())
                 .attributes(attributes)
                 .authorities(Collections.singleton(new SimpleGrantedAuthority(ESecurityRole.USER.getSecurityName())))
                 .build();

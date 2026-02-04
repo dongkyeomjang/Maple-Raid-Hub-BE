@@ -1,14 +1,15 @@
 package com.mapleraid.security.filter;
 
-import com.mapleraid.application.port.out.UserRepository;
 import com.mapleraid.core.constant.Constants;
+import com.mapleraid.core.exception.definition.ErrorCode;
+import com.mapleraid.core.exception.type.CommonException;
 import com.mapleraid.core.utility.CookieUtil;
 import com.mapleraid.core.utility.JsonWebTokenUtil;
-import com.mapleraid.domain.common.DomainException;
-import com.mapleraid.domain.user.User;
-import com.mapleraid.domain.user.UserId;
-import com.mapleraid.security.domain.type.ESecurityRole;
 import com.mapleraid.security.info.CustomUserPrincipal;
+import com.mapleraid.security.type.ESecurityRole;
+import com.mapleraid.user.application.port.out.UserRepository;
+import com.mapleraid.user.domain.User;
+import com.mapleraid.user.domain.UserId;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,15 +36,15 @@ public class JsonWebTokenAuthenticationFilter extends OncePerRequestFilter {
     private final String cookieDomain;
     private final String accessTokenCookieName;
     private final String refreshTokenCookieName;
-    private final Long accessTokenMaxAge;
+    private final Long cookieMaxAge;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        // 1. 쿠키에서 토큰 확인 (새 방식)
+        // 쿠키에서 토큰 확인
         Optional<String> accessTokenOptional = CookieUtil.refineCookie(request, accessTokenCookieName);
 
-        // 2. 쿠키에 없으면 Authorization 헤더 확인 (하위 호환 - 캐시된 프론트엔드 지원)
+        // 쿠키에 없으면 Authorization 헤더 확인 (캐시된 프론트엔드도 하위호환으로 지원)
         if (accessTokenOptional.isEmpty()) {
             String authHeader = request.getHeader(Constants.AUTHORIZATION_HEADER);
             if (authHeader != null && authHeader.startsWith(Constants.BEARER_PREFIX)) {
@@ -62,9 +63,9 @@ public class JsonWebTokenAuthenticationFilter extends OncePerRequestFilter {
             setAuthentication(request, claims);
             filterChain.doFilter(request, response);
 
-        } catch (DomainException e) {
+        } catch (CommonException e) {
             // Access token 만료 시 자동 갱신 시도
-            if ("TOKEN_EXPIRED".equals(e.getErrorCode())) {
+            if (ErrorCode.EXPIRED_TOKEN_ERROR.equals(e.getErrorCode())) {
                 if (tryRefreshToken(request, response)) {
                     filterChain.doFilter(request, response);
                     return;
@@ -83,6 +84,7 @@ public class JsonWebTokenAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * Refresh token으로 access token 자동 갱신 시도
+     *
      * @return 갱신 성공 여부
      */
     private boolean tryRefreshToken(HttpServletRequest request, HttpServletResponse response) {
@@ -101,12 +103,12 @@ public class JsonWebTokenAuthenticationFilter extends OncePerRequestFilter {
                 return false;
             }
 
-            // 새 access token 발급 (현재 시스템은 모든 사용자가 USER role)
+            // 새 access token 발급
             String newAccessToken = jsonWebTokenUtil.generateAccessToken(accountId, ESecurityRole.USER);
 
             // 쿠키에 새 access token 설정
             CookieUtil.addSecureCookie(response, cookieDomain, accessTokenCookieName, newAccessToken,
-                    (int) (accessTokenMaxAge / 1000));
+                    (int) (cookieMaxAge / 1000));
 
             // 인증 설정
             setAuthentication(request, jsonWebTokenUtil.validateToken(newAccessToken));

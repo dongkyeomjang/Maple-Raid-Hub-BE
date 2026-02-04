@@ -1,0 +1,11 @@
+package com.mapleraid.party.application.port.in.usecase;
+
+import com.mapleraid.core.annotation.bean.UseCase;
+import com.mapleraid.party.application.port.in.input.query.ReadAllAvailabilityInput;
+import com.mapleraid.party.application.port.in.output.result.ReadAllAvailabilityResult;
+
+@UseCase
+public interface ReadAllAvailabilityUseCase {
+
+    ReadAllAvailabilityResult execute(ReadAllAvailabilityInput input);
+}

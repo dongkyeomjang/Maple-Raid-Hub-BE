@@ -1,7 +1,7 @@
 package com.mapleraid.security.info.factory;
 
-import com.mapleraid.security.domain.type.ESecurityProvider;
 import com.mapleraid.security.info.KakaoOauth2UserInfo;
+import com.mapleraid.security.type.ESecurityProvider;
 
 import java.util.Map;
 

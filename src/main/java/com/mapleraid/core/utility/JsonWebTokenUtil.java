@@ -1,10 +1,11 @@
 package com.mapleraid.core.utility;
 
 import com.mapleraid.core.constant.Constants;
-import com.mapleraid.domain.common.DomainException;
+import com.mapleraid.core.exception.definition.ErrorCode;
+import com.mapleraid.core.exception.type.CommonException;
 import com.mapleraid.security.application.dto.DefaultJsonWebTokenDto;
 import com.mapleraid.security.application.dto.OauthJsonWebTokenDto;
-import com.mapleraid.security.domain.type.ESecurityRole;
+import com.mapleraid.security.type.ESecurityRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtBuilder;
@@ -85,15 +86,15 @@ public class JsonWebTokenUtil implements InitializingBean {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (MalformedJwtException e) {
-            throw new DomainException("TOKEN_MALFORMED", "잘못된 형식의 토큰입니다.");
+            throw new CommonException(ErrorCode.TOKEN_MALFORMED_ERROR);
         } catch (IllegalArgumentException e) {
-            throw new DomainException("TOKEN_TYPE_ERROR", "토큰 타입이 올바르지 않습니다.");
+            throw new CommonException(ErrorCode.TOKEN_TYPE_ERROR);
         } catch (ExpiredJwtException e) {
-            throw new DomainException("TOKEN_EXPIRED", "토큰이 만료되었습니다.");
+            throw new CommonException(ErrorCode.EXPIRED_TOKEN_ERROR);
         } catch (UnsupportedJwtException e) {
-            throw new DomainException("TOKEN_UNSUPPORTED", "지원하지 않는 토큰입니다.");
+            throw new CommonException(ErrorCode.TOKEN_UNSUPPORTED_ERROR);
         } catch (JwtException e) {
-            throw new DomainException("TOKEN_UNKNOWN", "토큰 처리 중 오류가 발생했습니다.");
+            throw new CommonException(ErrorCode.TOKEN_UNKNOWN_ERROR);
         }
     }
 

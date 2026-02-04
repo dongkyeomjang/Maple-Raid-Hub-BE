@@ -43,11 +43,12 @@ public class HttpServletUtil {
 
         // 최초 로그인이 아닐 시
         if (tokenDto.getTemporaryToken() == null) {
-            CookieUtil.addCookie(
+            CookieUtil.addSecureCookie(
                     response,
                     cookieDomain,
                     accessTokenCookieName,
-                    tokenDto.getAccessToken()
+                    tokenDto.getAccessToken(),
+                    (int) (refreshTokenExpirePeriod / 1000L)
             );
 
             CookieUtil.addSecureCookie(
@@ -103,11 +104,12 @@ public class HttpServletUtil {
         response.setStatus(HttpStatus.CREATED.value());
 
         // 임시 토큰 삭제 및 정상 토큰 설정
-        CookieUtil.addCookie(
+        CookieUtil.addSecureCookie(
                 response,
                 cookieDomain,
                 accessTokenCookieName,
-                tokenDto.getAccessToken()
+                tokenDto.getAccessToken(),
+                (int) (refreshTokenExpirePeriod / 1000L)
         );
 
         CookieUtil.addSecureCookie(
