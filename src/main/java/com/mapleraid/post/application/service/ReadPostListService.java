@@ -40,11 +40,22 @@ public class ReadPostListService implements ReadPostListUseCase {
         List<Post> posts;
         long total;
 
-        if (input.getWorldGroup() != null) {
+        boolean hasBossFilter = input.getBossIds() != null && !input.getBossIds().isEmpty();
+
+        if (input.getWorldGroup() != null && hasBossFilter) {
+            posts = postRepository.findByWorldGroupAndStatusAndBossIds(
+                    input.getWorldGroup(), input.getStatus(), input.getBossIds(), input.getPage(), input.getSize());
+            total = postRepository.countByWorldGroupAndStatusAndBossIds(
+                    input.getWorldGroup(), input.getStatus(), input.getBossIds());
+        } else if (input.getWorldGroup() != null) {
             posts = postRepository.findByWorldGroupAndStatus(
                     input.getWorldGroup(), input.getStatus(), input.getPage(), input.getSize());
             total = postRepository.countByWorldGroupAndStatus(
                     input.getWorldGroup(), input.getStatus());
+        } else if (hasBossFilter) {
+            posts = postRepository.findByStatusAndBossIds(
+                    input.getStatus(), input.getBossIds(), input.getPage(), input.getSize());
+            total = postRepository.countByStatusAndBossIds(input.getStatus(), input.getBossIds());
         } else {
             posts = postRepository.findByStatus(
                     input.getStatus(), input.getPage(), input.getSize());

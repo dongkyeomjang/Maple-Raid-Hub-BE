@@ -30,6 +30,42 @@ public interface PostJpaRepository extends JpaRepository<PostJpaEntity, String> 
 
     List<PostJpaEntity> findByAuthorIdAndStatusOrderByCreatedAtDesc(String authorId, PostStatus status);
 
+    @Query("SELECT DISTINCT p FROM PostJpaEntity p WHERE p.status = :status " +
+           "AND (SELECT COUNT(DISTINCT b) FROM PostJpaEntity p2 JOIN p2.bossIds b " +
+           "WHERE p2 = p AND b IN :bossIds) = :bossIdCount")
+    List<PostJpaEntity> findByStatusAndBossIdsContainingAll(
+            @Param("status") PostStatus status,
+            @Param("bossIds") List<String> bossIds,
+            @Param("bossIdCount") long bossIdCount,
+            Pageable pageable);
+
+    @Query("SELECT COUNT(DISTINCT p) FROM PostJpaEntity p WHERE p.status = :status " +
+           "AND (SELECT COUNT(DISTINCT b) FROM PostJpaEntity p2 JOIN p2.bossIds b " +
+           "WHERE p2 = p AND b IN :bossIds) = :bossIdCount")
+    long countByStatusAndBossIdsContainingAll(
+            @Param("status") PostStatus status,
+            @Param("bossIds") List<String> bossIds,
+            @Param("bossIdCount") long bossIdCount);
+
+    @Query("SELECT DISTINCT p FROM PostJpaEntity p WHERE p.worldGroup = :worldGroup AND p.status = :status " +
+           "AND (SELECT COUNT(DISTINCT b) FROM PostJpaEntity p2 JOIN p2.bossIds b " +
+           "WHERE p2 = p AND b IN :bossIds) = :bossIdCount")
+    List<PostJpaEntity> findByWorldGroupAndStatusAndBossIdsContainingAll(
+            @Param("worldGroup") EWorldGroup worldGroup,
+            @Param("status") PostStatus status,
+            @Param("bossIds") List<String> bossIds,
+            @Param("bossIdCount") long bossIdCount,
+            Pageable pageable);
+
+    @Query("SELECT COUNT(DISTINCT p) FROM PostJpaEntity p WHERE p.worldGroup = :worldGroup AND p.status = :status " +
+           "AND (SELECT COUNT(DISTINCT b) FROM PostJpaEntity p2 JOIN p2.bossIds b " +
+           "WHERE p2 = p AND b IN :bossIds) = :bossIdCount")
+    long countByWorldGroupAndStatusAndBossIdsContainingAll(
+            @Param("worldGroup") EWorldGroup worldGroup,
+            @Param("status") PostStatus status,
+            @Param("bossIds") List<String> bossIds,
+            @Param("bossIdCount") long bossIdCount);
+
     @Query("SELECT DISTINCT p FROM PostJpaEntity p LEFT JOIN FETCH p.applications a WHERE a.applicantId = :applicantId")
     List<PostJpaEntity> findByApplicationsApplicantId(@Param("applicantId") String applicantId);
 

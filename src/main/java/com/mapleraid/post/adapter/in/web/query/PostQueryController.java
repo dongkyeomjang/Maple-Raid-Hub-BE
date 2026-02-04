@@ -50,10 +50,11 @@ public class PostQueryController {
             @RequestParam(required = false) EWorldGroup worldGroup,
             @RequestParam(defaultValue = "RECRUITING") PostStatus status,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) List<String> bossIds) {
 
         ReadPostListResult result = readPostListUseCase.execute(
-                ReadPostListInput.of(worldGroup, status, page, size));
+                ReadPostListInput.of(worldGroup, status, page, size, bossIds));
         List<PostResponseDto> posts = result.getPosts().stream()
                 .map(PostResponseDto::from)
                 .toList();

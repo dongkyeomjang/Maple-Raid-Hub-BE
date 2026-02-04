@@ -71,6 +71,32 @@ public class PostPersistenceAdapter implements PostRepository {
     }
 
     @Override
+    public List<Post> findByStatusAndBossIds(PostStatus status, List<String> bossIds, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return jpaRepository.findByStatusAndBossIdsContainingAll(status, bossIds, bossIds.size(), pageable).stream()
+                .map(PostJpaEntity::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Post> findByWorldGroupAndStatusAndBossIds(EWorldGroup worldGroup, PostStatus status, List<String> bossIds, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return jpaRepository.findByWorldGroupAndStatusAndBossIdsContainingAll(worldGroup, status, bossIds, bossIds.size(), pageable).stream()
+                .map(PostJpaEntity::toDomain)
+                .toList();
+    }
+
+    @Override
+    public long countByStatusAndBossIds(PostStatus status, List<String> bossIds) {
+        return jpaRepository.countByStatusAndBossIdsContainingAll(status, bossIds, bossIds.size());
+    }
+
+    @Override
+    public long countByWorldGroupAndStatusAndBossIds(EWorldGroup worldGroup, PostStatus status, List<String> bossIds) {
+        return jpaRepository.countByWorldGroupAndStatusAndBossIdsContainingAll(worldGroup, status, bossIds, bossIds.size());
+    }
+
+    @Override
     public List<Application> findApplicationsByApplicantId(UserId applicantId) {
         return jpaRepository.findByApplicationsApplicantIdAndStatus(
                         applicantId.getValue().toString(), ApplicationStatus.APPLIED)
