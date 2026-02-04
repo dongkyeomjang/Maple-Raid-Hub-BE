@@ -12,7 +12,7 @@ closed #<issue_number>
 - [ ] ♻️ Refactor: Code refactoring
 - [ ] ⚙️ Setting: Development environment setup
 - [ ] ✅ Test: Test related (storybook, jest, etc.)
-- 
+
 ## Work Description ✏️
 [//]: # (작업 내용 간단 소개)
 
@@ -30,7 +30,6 @@ PR이 다음 요구 사항을 충족하는지 확인하세요.
 
 - [ ] PR 컨벤션에 맞게 작성했습니다. (필수)
 - [ ] 코드가 정상적으로 동작합니다. (필수)
--
 
 ## To Reviewers 📢
 [//]: # (reviewer가 알면 좋은 내용들)

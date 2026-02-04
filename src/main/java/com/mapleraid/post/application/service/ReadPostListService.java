@@ -82,6 +82,7 @@ public class ReadPostListService implements ReadPostListUseCase {
                             post.getRequiredMembers(),
                             post.getCurrentMembers(),
                             post.getPreferredTime(),
+                            post.getDescription(),
                             post.getStatus().name(),
                             post.getPartyRoomId() != null ? post.getPartyRoomId().getValue().toString() : null,
                             post.getCreatedAt(),
