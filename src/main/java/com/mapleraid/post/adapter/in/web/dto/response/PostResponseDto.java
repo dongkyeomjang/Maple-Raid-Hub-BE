@@ -59,7 +59,7 @@ public record PostResponseDto(
         return new PostResponseDto(summary.getId(), summary.getAuthorId(), summary.getAuthorNickname(),
                 summary.getCharacterId(), summary.getCharacterName(), summary.getCharacterImageUrl(),
                 summary.getWorldGroup(), summary.getBossIds(), summary.getRequiredMembers(),
-                summary.getCurrentMembers(), summary.getPreferredTime(), null,
+                summary.getCurrentMembers(), summary.getPreferredTime(), summary.getDescription(),
                 summary.getStatus(), summary.getPartyRoomId(),
                 summary.getCreatedAt(), summary.getUpdatedAt(), summary.getExpiresAt());
     }
