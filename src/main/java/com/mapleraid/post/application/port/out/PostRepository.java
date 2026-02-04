@@ -26,6 +26,14 @@ public interface PostRepository {
 
     long countByWorldGroupAndStatus(EWorldGroup EWorldGroup, PostStatus status);
 
+    List<Post> findByStatusAndBossIds(PostStatus status, List<String> bossIds, int page, int size);
+
+    List<Post> findByWorldGroupAndStatusAndBossIds(EWorldGroup worldGroup, PostStatus status, List<String> bossIds, int page, int size);
+
+    long countByStatusAndBossIds(PostStatus status, List<String> bossIds);
+
+    long countByWorldGroupAndStatusAndBossIds(EWorldGroup worldGroup, PostStatus status, List<String> bossIds);
+
     List<Application> findApplicationsByApplicantId(UserId applicantId);
 
     List<Post> findByAuthorId(UserId authorId);
