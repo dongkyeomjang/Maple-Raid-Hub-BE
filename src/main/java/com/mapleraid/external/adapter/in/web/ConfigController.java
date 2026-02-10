@@ -93,7 +93,10 @@ public class ConfigController {
                 boolean weeklyReset = bossNode.has("weeklyReset") && bossNode.get("weeklyReset").asBoolean();
                 boolean monthlyReset = bossNode.has("monthlyReset") && bossNode.get("monthlyReset").asBoolean();
 
-                bosses.add(BossConfigDto.from(id, bossFamily, displayName, shortName, difficulty, maxPartySize, weeklyReset, monthlyReset));
+                // 결정석 가격 추출
+                long crystalPrice = bossNode.has("crystalPrice") ? bossNode.get("crystalPrice").asLong() : 0L;
+
+                bosses.add(BossConfigDto.from(id, bossFamily, displayName, shortName, difficulty, maxPartySize, weeklyReset, monthlyReset, crystalPrice));
             }
         }
 

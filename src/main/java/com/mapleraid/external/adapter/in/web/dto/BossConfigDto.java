@@ -11,7 +11,8 @@ public record BossConfigDto(
         String difficulty,
         int partySize,
         String resetType,
-        String iconUrl
+        String iconUrl,
+        long crystalPrice
 ) {
     public static BossConfigDto from(
             String id,
@@ -21,7 +22,8 @@ public record BossConfigDto(
             String difficulty,
             int maxPartySize,
             boolean weeklyReset,
-            boolean monthlyReset
+            boolean monthlyReset,
+            long crystalPrice
     ) {
         String resetType = monthlyReset ? "MONTHLY" : (weeklyReset ? "WEEKLY" : "DAILY");
         return new BossConfigDto(
@@ -32,7 +34,8 @@ public record BossConfigDto(
                 difficulty,
                 maxPartySize,
                 resetType,
-                null
+                null,
+                crystalPrice
         );
     }
 }
