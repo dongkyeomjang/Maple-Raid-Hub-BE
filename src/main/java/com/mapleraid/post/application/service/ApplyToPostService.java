@@ -5,16 +5,16 @@ import com.mapleraid.character.domain.Character;
 import com.mapleraid.character.domain.type.EVerificationStatus;
 import com.mapleraid.core.exception.definition.ErrorCode;
 import com.mapleraid.core.exception.type.CommonException;
+import com.mapleraid.notification.application.event.ApplicationReceivedEvent;
 import com.mapleraid.post.application.port.in.input.command.ApplyToPostInput;
 import com.mapleraid.post.application.port.in.output.result.ApplyToPostResult;
 import com.mapleraid.post.application.port.in.usecase.ApplyToPostUseCase;
-import com.mapleraid.notification.application.event.ApplicationReceivedEvent;
 import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Application;
 import com.mapleraid.post.domain.Post;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
