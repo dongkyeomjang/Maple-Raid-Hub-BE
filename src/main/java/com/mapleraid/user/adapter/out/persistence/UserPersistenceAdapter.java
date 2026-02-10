@@ -71,4 +71,10 @@ public class UserPersistenceAdapter implements UserRepository {
         return jpaRepository.findByProviderAndProviderId(provider, providerId)
                 .map(UserJpaEntity::toDomain);
     }
+
+    @Override
+    public Optional<User> findByDiscordId(String discordId) {
+        return jpaRepository.findByDiscordId(discordId)
+                .map(UserJpaEntity::toDomain);
+    }
 }

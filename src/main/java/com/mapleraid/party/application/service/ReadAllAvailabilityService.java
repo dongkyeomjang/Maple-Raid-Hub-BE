@@ -15,6 +15,7 @@ import com.mapleraid.party.domain.PartyRoom;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
 import com.mapleraid.user.domain.UserId;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,24 +27,15 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReadAllAvailabilityService implements ReadAllAvailabilityUseCase {
     private final AvailabilityRepository availabilityRepository;
     private final PartyRoomRepository partyRoomRepository;
     private final UserRepository userRepository;
     private final CharacterRepository characterRepository;
 
-    public ReadAllAvailabilityService(AvailabilityRepository availabilityRepository,
-                                      PartyRoomRepository partyRoomRepository,
-                                      UserRepository userRepository,
-                                      CharacterRepository characterRepository) {
-        this.availabilityRepository = availabilityRepository;
-        this.partyRoomRepository = partyRoomRepository;
-        this.userRepository = userRepository;
-        this.characterRepository = characterRepository;
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public ReadAllAvailabilityResult execute(ReadAllAvailabilityInput input) {
         PartyRoom partyRoom = partyRoomRepository.findById(input.getPartyRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.PARTY_NOT_FOUND));

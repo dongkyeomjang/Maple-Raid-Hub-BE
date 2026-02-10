@@ -9,25 +9,21 @@ import com.mapleraid.party.application.port.out.PartyChatMessageRepository;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyRoom;
 import com.mapleraid.user.domain.UserId;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class SendPartyChatMessageService implements SendPartyChatMessageUseCase {
 
     private final PartyRoomRepository partyRoomRepository;
     private final PartyChatMessageRepository chatMessageRepository;
 
-    public SendPartyChatMessageService(PartyRoomRepository partyRoomRepository,
-                                       PartyChatMessageRepository chatMessageRepository) {
-        this.partyRoomRepository = partyRoomRepository;
-        this.chatMessageRepository = chatMessageRepository;
-    }
-
     @Override
+    @Transactional
     public SendPartyChatMessageResult execute(SendPartyChatMessageInput input) {
         PartyRoom partyRoom = partyRoomRepository.findById(input.getPartyRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.PARTY_NOT_FOUND));

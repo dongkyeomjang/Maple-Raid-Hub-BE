@@ -11,6 +11,7 @@ import com.mapleraid.post.domain.Post;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
 import com.mapleraid.user.domain.UserId;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,22 +21,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReadMyPostsService implements ReadMyPostsUseCase {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CharacterRepository characterRepository;
 
-    public ReadMyPostsService(PostRepository postRepository,
-                              UserRepository userRepository,
-                              CharacterRepository characterRepository) {
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-        this.characterRepository = characterRepository;
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public ReadMyPostsResult execute(ReadMyPostsInput input) {
         List<Post> posts = postRepository.findByAuthorId(input.getUserId());
 

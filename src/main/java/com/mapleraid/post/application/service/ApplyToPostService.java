@@ -8,32 +8,29 @@ import com.mapleraid.core.exception.type.CommonException;
 import com.mapleraid.post.application.port.in.input.command.ApplyToPostInput;
 import com.mapleraid.post.application.port.in.output.result.ApplyToPostResult;
 import com.mapleraid.post.application.port.in.usecase.ApplyToPostUseCase;
+import com.mapleraid.notification.application.event.ApplicationReceivedEvent;
 import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Application;
 import com.mapleraid.post.domain.Post;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class ApplyToPostService implements ApplyToPostUseCase {
 
     private final PostRepository postRepository;
     private final CharacterRepository characterRepository;
     private final SimpMessagingTemplate messagingTemplate;
-
-    public ApplyToPostService(PostRepository postRepository,
-                              CharacterRepository characterRepository,
-                              SimpMessagingTemplate messagingTemplate) {
-        this.postRepository = postRepository;
-        this.characterRepository = characterRepository;
-        this.messagingTemplate = messagingTemplate;
-    }
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
+    @Transactional
     public ApplyToPostResult execute(ApplyToPostInput input) {
         Post post = postRepository.findByIdWithApplications(input.getPostId())
                 .orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));
@@ -61,6 +58,14 @@ public class ApplyToPostService implements ApplyToPostUseCase {
         messagingTemplate.convertAndSend(
                 "/topic/post/" + input.getPostId().getValue(),
                 Map.of("type", "APPLICATION_NEW", "postId", input.getPostId().getValue().toString()));
+
+        String bossName = post.getBossIds().isEmpty() ? "" : post.getBossIds().get(0);
+        eventPublisher.publishEvent(new ApplicationReceivedEvent(
+                post.getAuthorId(),
+                character.getCharacterName(),
+                bossName,
+                post.getId().getValue().toString()
+        ));
 
         return ApplyToPostResult.from(application);
     }

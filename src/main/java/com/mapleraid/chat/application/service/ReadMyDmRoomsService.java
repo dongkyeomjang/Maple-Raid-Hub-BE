@@ -11,6 +11,7 @@ import com.mapleraid.chat.domain.DirectMessageRoom;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
 import com.mapleraid.user.domain.UserId;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,22 +23,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReadMyDmRoomsService implements ReadMyDmRoomsUseCase {
 
     private final DirectMessageRoomRepository roomRepository;
     private final UserRepository userRepository;
     private final CharacterRepository characterRepository;
 
-    public ReadMyDmRoomsService(DirectMessageRoomRepository roomRepository,
-                                UserRepository userRepository,
-                                CharacterRepository characterRepository) {
-        this.roomRepository = roomRepository;
-        this.userRepository = userRepository;
-        this.characterRepository = characterRepository;
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public ReadMyDmRoomsResult execute(ReadMyDmRoomsInput input) {
         UserId userId = input.getUserId();
         List<DirectMessageRoom> rooms = roomRepository.findByUserId(userId);

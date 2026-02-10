@@ -24,6 +24,12 @@ public class LoginResult extends SelfValidating<LoginResult> {
 
     private final LocalDateTime createdAt;
 
+    private final boolean discordLinked;
+
+    private final String discordUsername;
+
+    private final boolean discordPromptDismissed;
+
     public LoginResult(
             String userId,
             String username,
@@ -31,7 +37,10 @@ public class LoginResult extends SelfValidating<LoginResult> {
             boolean nicknameSet,
             double temperature,
             int completedParties,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            boolean discordLinked,
+            String discordUsername,
+            boolean discordPromptDismissed
     ) {
         this.userId = userId;
         this.username = username;
@@ -40,6 +49,9 @@ public class LoginResult extends SelfValidating<LoginResult> {
         this.temperature = temperature;
         this.completedParties = completedParties;
         this.createdAt = createdAt;
+        this.discordLinked = discordLinked;
+        this.discordUsername = discordUsername;
+        this.discordPromptDismissed = discordPromptDismissed;
 
         this.validateSelf();
     }
@@ -52,7 +64,10 @@ public class LoginResult extends SelfValidating<LoginResult> {
                 user.isNicknameSet(),
                 user.getTemperature(),
                 user.getCompletedParties(),
-                LocalDateTime.ofInstant(user.getCreatedAt(), ZoneId.systemDefault())
+                LocalDateTime.ofInstant(user.getCreatedAt(), ZoneId.systemDefault()),
+                user.isDiscordLinked(),
+                user.getDiscordUsername(),
+                user.isDiscordPromptDismissed()
         );
     }
 

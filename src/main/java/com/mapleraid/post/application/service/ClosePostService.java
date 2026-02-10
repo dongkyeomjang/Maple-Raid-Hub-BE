@@ -11,26 +11,20 @@ import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Post;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class ClosePostService implements ClosePostUseCase {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CharacterRepository characterRepository;
 
-    public ClosePostService(PostRepository postRepository,
-                            UserRepository userRepository,
-                            CharacterRepository characterRepository) {
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-        this.characterRepository = characterRepository;
-    }
-
     @Override
+    @Transactional
     public ClosePostResult execute(ClosePostInput input) {
         Post post = postRepository.findById(input.getPostId())
                 .orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));

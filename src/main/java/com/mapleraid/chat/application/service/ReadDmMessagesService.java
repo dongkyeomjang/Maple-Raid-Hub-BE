@@ -14,6 +14,7 @@ import com.mapleraid.core.exception.type.CommonException;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
 import com.mapleraid.user.domain.UserId;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReadDmMessagesService implements ReadDmMessagesUseCase {
 
     private final DirectMessageRoomRepository roomRepository;
@@ -33,17 +34,8 @@ public class ReadDmMessagesService implements ReadDmMessagesUseCase {
     private final UserRepository userRepository;
     private final CharacterRepository characterRepository;
 
-    public ReadDmMessagesService(DirectMessageRoomRepository roomRepository,
-                                 DmMessageRepository messageRepository,
-                                 UserRepository userRepository,
-                                 CharacterRepository characterRepository) {
-        this.roomRepository = roomRepository;
-        this.messageRepository = messageRepository;
-        this.userRepository = userRepository;
-        this.characterRepository = characterRepository;
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public ReadDmMessagesResult execute(ReadDmMessagesInput input) {
         DirectMessageRoom room = roomRepository.findById(input.getRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.DM_ROOM_NOT_FOUND));

@@ -15,7 +15,10 @@ public record UserResponseDto(
         boolean nicknameSet,
         double temperature,
         int completedParties,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        boolean discordLinked,
+        String discordUsername,
+        boolean discordPromptDismissed
 ) {
     public static UserResponseDto from(SignupResult result) {
         return new UserResponseDto(
@@ -25,7 +28,10 @@ public record UserResponseDto(
                 result.isNicknameSet(),
                 result.getTemperature(),
                 result.getCompletedParties(),
-                result.getCreatedAt()
+                result.getCreatedAt(),
+                result.isDiscordLinked(),
+                result.getDiscordUsername(),
+                result.isDiscordPromptDismissed()
         );
     }
 
@@ -37,7 +43,10 @@ public record UserResponseDto(
                 result.isNicknameSet(),
                 result.getTemperature(),
                 result.getCompletedParties(),
-                result.getCreatedAt()
+                result.getCreatedAt(),
+                result.isDiscordLinked(),
+                result.getDiscordUsername(),
+                result.isDiscordPromptDismissed()
         );
     }
 
@@ -49,7 +58,10 @@ public record UserResponseDto(
                 result.isNicknameSet(),
                 result.getTemperature(),
                 result.getCompletedParties(),
-                result.getCreatedAt()
+                result.getCreatedAt(),
+                result.isDiscordLinked(),
+                result.getDiscordUsername(),
+                result.isDiscordPromptDismissed()
         );
     }
 
@@ -61,7 +73,10 @@ public record UserResponseDto(
                 result.isNicknameSet(),
                 result.getTemperature(),
                 result.getCompletedParties(),
-                result.getCreatedAt()
+                result.getCreatedAt(),
+                result.isDiscordLinked(),
+                result.getDiscordUsername(),
+                result.isDiscordPromptDismissed()
         );
     }
 
@@ -73,7 +88,10 @@ public record UserResponseDto(
                 result.isNicknameSet(),
                 result.getTemperature(),
                 result.getCompletedParties(),
-                result.getCreatedAt()
+                result.getCreatedAt(),
+                result.isDiscordLinked(),
+                result.getDiscordUsername(),
+                result.isDiscordPromptDismissed()
         );
     }
 }

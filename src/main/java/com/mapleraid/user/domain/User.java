@@ -32,6 +32,12 @@ public class User {
     private UserStatus status;
     private Instant suspendedUntil;
 
+    // Discord
+    private String discordId;
+    private String discordUsername;
+    private boolean discordNotificationsEnabled;
+    private boolean discordPromptDismissed;
+
     // Timestamps
     private Instant createdAt;
     private Instant updatedAt;
@@ -83,6 +89,20 @@ public class User {
             BigDecimal temperature, int completedPartyCount, int noShowCount,
             UserStatus status, Instant suspendedUntil,
             Instant createdAt, Instant updatedAt, Instant lastLoginAt) {
+        return reconstitute(id, username, passwordHash, nickname, provider, providerId, nicknameSet,
+                temperature, completedPartyCount, noShowCount, status, suspendedUntil,
+                createdAt, updatedAt, lastLoginAt,
+                null, null, false, false);
+    }
+
+    public static User reconstitute(
+            UserId id, String username, String passwordHash, String nickname,
+            String provider, String providerId, boolean nicknameSet,
+            BigDecimal temperature, int completedPartyCount, int noShowCount,
+            UserStatus status, Instant suspendedUntil,
+            Instant createdAt, Instant updatedAt, Instant lastLoginAt,
+            String discordId, String discordUsername,
+            boolean discordNotificationsEnabled, boolean discordPromptDismissed) {
         User user = new User(id, username, passwordHash, nickname);
         user.provider = provider != null ? provider : "default";
         user.providerId = providerId;
@@ -95,6 +115,10 @@ public class User {
         user.createdAt = createdAt;
         user.updatedAt = updatedAt;
         user.lastLoginAt = lastLoginAt;
+        user.discordId = discordId;
+        user.discordUsername = discordUsername;
+        user.discordNotificationsEnabled = discordNotificationsEnabled;
+        user.discordPromptDismissed = discordPromptDismissed;
         return user;
     }
 
@@ -194,6 +218,40 @@ public class User {
         return provider != null && !"default".equals(provider);
     }
 
+    /**
+     * Discord 연동
+     */
+    public void linkDiscord(String discordId, String discordUsername) {
+        this.discordId = Objects.requireNonNull(discordId);
+        this.discordUsername = Objects.requireNonNull(discordUsername);
+        this.discordNotificationsEnabled = true;
+        this.discordPromptDismissed = true;
+        this.updatedAt = Instant.now();
+    }
+
+    /**
+     * Discord 연동 해제
+     */
+    public void unlinkDiscord() {
+        this.discordId = null;
+        this.discordUsername = null;
+        this.discordNotificationsEnabled = false;
+        this.updatedAt = Instant.now();
+    }
+
+    public boolean isDiscordLinked() {
+        return discordId != null;
+    }
+
+    public boolean isDiscordNotificationsEnabled() {
+        return discordNotificationsEnabled;
+    }
+
+    public void dismissDiscordPrompt() {
+        this.discordPromptDismissed = true;
+        this.updatedAt = Instant.now();
+    }
+
     // Getters
     public UserId getId() {
         return id;
@@ -265,6 +323,18 @@ public class User {
 
     public Instant getLastLoginAt() {
         return lastLoginAt;
+    }
+
+    public String getDiscordId() {
+        return discordId;
+    }
+
+    public String getDiscordUsername() {
+        return discordUsername;
+    }
+
+    public boolean isDiscordPromptDismissed() {
+        return discordPromptDismissed;
     }
 
     public enum UserStatus {

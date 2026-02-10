@@ -6,20 +6,18 @@ import com.mapleraid.post.application.port.in.input.command.DeletePostInput;
 import com.mapleraid.post.application.port.in.usecase.DeletePostUseCase;
 import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Post;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class DeletePostService implements DeletePostUseCase {
 
     private final PostRepository postRepository;
 
-    public DeletePostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
-
     @Override
+    @Transactional
     public void execute(DeletePostInput input) {
         Post post = postRepository.findById(input.getPostId())
                 .orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));

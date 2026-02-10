@@ -7,23 +7,19 @@ import com.mapleraid.chat.application.port.out.DmMessageRepository;
 import com.mapleraid.chat.domain.DirectMessageRoom;
 import com.mapleraid.core.exception.definition.ErrorCode;
 import com.mapleraid.core.exception.type.CommonException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class MarkDmAsReadService implements MarkDmAsReadUseCase {
 
     private final DirectMessageRoomRepository roomRepository;
     private final DmMessageRepository messageRepository;
 
-    public MarkDmAsReadService(DirectMessageRoomRepository roomRepository,
-                               DmMessageRepository messageRepository) {
-        this.roomRepository = roomRepository;
-        this.messageRepository = messageRepository;
-    }
-
     @Override
+    @Transactional
     public void execute(MarkDmAsReadInput input) {
         DirectMessageRoom room = roomRepository.findById(input.getRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.DM_ROOM_NOT_FOUND));

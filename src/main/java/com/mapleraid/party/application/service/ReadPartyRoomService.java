@@ -12,6 +12,7 @@ import com.mapleraid.party.application.port.out.PartyChatMessageRepository;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyMember;
 import com.mapleraid.party.domain.PartyRoom;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,22 +22,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReadPartyRoomService implements ReadPartyRoomUseCase {
 
     private final PartyRoomRepository partyRoomRepository;
     private final CharacterRepository characterRepository;
     private final PartyChatMessageRepository partyChatMessageRepository;
 
-    public ReadPartyRoomService(PartyRoomRepository partyRoomRepository,
-                                CharacterRepository characterRepository,
-                                PartyChatMessageRepository partyChatMessageRepository) {
-        this.partyRoomRepository = partyRoomRepository;
-        this.characterRepository = characterRepository;
-        this.partyChatMessageRepository = partyChatMessageRepository;
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public ReadPartyRoomResult execute(ReadPartyRoomInput input) {
         PartyRoom partyRoom = partyRoomRepository.findById(input.getPartyRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.PARTY_NOT_FOUND));

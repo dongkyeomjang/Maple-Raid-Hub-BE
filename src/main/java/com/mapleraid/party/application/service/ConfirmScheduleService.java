@@ -7,19 +7,17 @@ import com.mapleraid.party.application.port.in.output.result.ConfirmScheduleResu
 import com.mapleraid.party.application.port.in.usecase.ConfirmScheduleUseCase;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyRoom;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class ConfirmScheduleService implements ConfirmScheduleUseCase {
     private final PartyRoomRepository partyRoomRepository;
 
-    public ConfirmScheduleService(PartyRoomRepository partyRoomRepository) {
-        this.partyRoomRepository = partyRoomRepository;
-    }
-
     @Override
+    @Transactional
     public ConfirmScheduleResult execute(ConfirmScheduleInput input) {
         PartyRoom partyRoom = partyRoomRepository.findById(input.getPartyRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.PARTY_NOT_FOUND));

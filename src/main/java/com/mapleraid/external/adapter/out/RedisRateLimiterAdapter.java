@@ -1,6 +1,7 @@
 package com.mapleraid.external.adapter.out;
 
 import com.mapleraid.external.application.port.out.RateLimiterPort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -8,13 +9,10 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@RequiredArgsConstructor
 public class RedisRateLimiterAdapter implements RateLimiterPort {
 
     private final StringRedisTemplate redisTemplate;
-
-    public RedisRateLimiterAdapter(StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
 
     @Override
     public boolean tryAcquire(String key, int maxRequests, Duration window) {

@@ -27,6 +27,7 @@ import com.mapleraid.security.application.port.in.usecase.SignupUseCase;
 import com.mapleraid.security.application.port.in.usecase.UpdateNicknameUseCase;
 import com.mapleraid.security.type.ESecurityProvider;
 import com.mapleraid.security.type.ESecurityRole;
+import com.mapleraid.notification.application.port.in.usecase.DismissDiscordPromptUseCase;
 import com.mapleraid.user.domain.UserId;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,6 +52,7 @@ public class AuthCommandController {
     private final LoginUseCase loginUseCase;
     private final CompleteOauthSignupUseCase completeOauthSignupUseCase;
     private final UpdateNicknameUseCase updateNicknameUseCase;
+    private final DismissDiscordPromptUseCase dismissDiscordPromptUseCase;
     private final JsonWebTokenUtil jsonWebTokenUtil;
     private final HttpServletUtil httpServletUtil;
 
@@ -147,6 +149,12 @@ public class AuthCommandController {
         } catch (Exception e) {
             throw new CommonException(ErrorCode.INVALID_TOKEN_ERROR);
         }
+    }
+
+    @PatchMapping("/discord-prompt-dismiss")
+    public ResponseDto<Void> dismissDiscordPrompt(@CurrentUser UserId userId) {
+        dismissDiscordPromptUseCase.execute(userId);
+        return ResponseDto.ok(null);
     }
 
     @PatchMapping("/nickname")
