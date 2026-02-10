@@ -1,7 +1,6 @@
 package com.mapleraid.post.adapter.in.web.dto.response;
 
 import com.mapleraid.post.application.port.in.output.result.ApplyToPostResult;
-import com.mapleraid.post.application.port.in.output.result.ReadMyApplicationsResult;
 import com.mapleraid.post.application.port.in.output.result.ReadPostApplicationsResult;
 import com.mapleraid.post.application.port.in.output.result.RejectApplicationResult;
 
@@ -25,12 +24,6 @@ public record ApplicationResponseDto(
     public static ApplicationResponseDto from(RejectApplicationResult result) {
         return new ApplicationResponseDto(result.getId(), null, null, null,
                 result.getStatus(), null, result.getRespondedAt());
-    }
-
-    public static ApplicationResponseDto from(ReadMyApplicationsResult.ApplicationSummary summary) {
-        return new ApplicationResponseDto(summary.getId(), summary.getApplicantId(),
-                summary.getCharacterId(), summary.getMessage(), summary.getStatus(),
-                summary.getAppliedAt(), summary.getRespondedAt());
     }
 
     public static ApplicationResponseDto from(ReadPostApplicationsResult.ApplicationSummary summary) {

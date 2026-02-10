@@ -98,12 +98,12 @@ public class PostPersistenceAdapter implements PostRepository {
 
     @Override
     public List<Application> findApplicationsByApplicantId(UserId applicantId) {
-        return jpaRepository.findByApplicationsApplicantIdAndStatus(
-                        applicantId.getValue().toString(), ApplicationStatus.APPLIED)
+        return jpaRepository.findByApplicationsApplicantId(
+                        applicantId.getValue().toString())
                 .stream()
                 .flatMap(entity -> entity.toDomain().getApplications().stream()
-                        .filter(app -> app.getApplicantId().equals(applicantId)
-                                && app.getStatus() == ApplicationStatus.APPLIED))
+                        .filter(app -> app.getApplicantId().equals(applicantId)))
+                .sorted((a, b) -> b.getAppliedAt().compareTo(a.getAppliedAt()))
                 .toList();
     }
 

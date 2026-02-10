@@ -1,7 +1,6 @@
 package com.mapleraid.post.application.port.in.output.result;
 
 import com.mapleraid.core.dto.SelfValidating;
-import com.mapleraid.post.domain.Application;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -29,9 +28,20 @@ public class ReadMyApplicationsResult extends SelfValidating<ReadMyApplicationsR
         private final Instant appliedAt;
         private final Instant respondedAt;
 
+        // Post summary fields
+        private final List<String> bossIds;
+        private final String postStatus;
+        private final int requiredMembers;
+        private final int currentMembers;
+        private final String authorCharacterName;
+        private final String authorCharacterImageUrl;
+
         public ApplicationSummary(String id, String postId, String applicantId, String characterId,
                                   String message, String status,
-                                  Instant appliedAt, Instant respondedAt) {
+                                  Instant appliedAt, Instant respondedAt,
+                                  List<String> bossIds, String postStatus,
+                                  int requiredMembers, int currentMembers,
+                                  String authorCharacterName, String authorCharacterImageUrl) {
             this.id = id;
             this.postId = postId;
             this.applicantId = applicantId;
@@ -40,18 +50,12 @@ public class ReadMyApplicationsResult extends SelfValidating<ReadMyApplicationsR
             this.status = status;
             this.appliedAt = appliedAt;
             this.respondedAt = respondedAt;
-        }
-
-        public static ApplicationSummary from(Application app) {
-            return new ApplicationSummary(
-                    app.getId().getValue().toString(),
-                    app.getPostId().getValue().toString(),
-                    app.getApplicantId().getValue().toString(),
-                    app.getCharacterId().getValue().toString(),
-                    app.getMessage(),
-                    app.getStatus().name(),
-                    app.getAppliedAt(),
-                    app.getRespondedAt());
+            this.bossIds = bossIds;
+            this.postStatus = postStatus;
+            this.requiredMembers = requiredMembers;
+            this.currentMembers = currentMembers;
+            this.authorCharacterName = authorCharacterName;
+            this.authorCharacterImageUrl = authorCharacterImageUrl;
         }
     }
 }

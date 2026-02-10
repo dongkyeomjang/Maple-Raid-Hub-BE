@@ -4,6 +4,7 @@ import com.mapleraid.character.domain.type.EWorldGroup;
 import com.mapleraid.core.annotation.bean.CurrentUser;
 import com.mapleraid.core.dto.ResponseDto;
 import com.mapleraid.post.adapter.in.web.dto.response.ApplicationsResponseDto;
+import com.mapleraid.post.adapter.in.web.dto.response.MyApplicationsListResponseDto;
 import com.mapleraid.post.adapter.in.web.dto.response.PostDetailResponseDto;
 import com.mapleraid.post.adapter.in.web.dto.response.PostListResponseDto;
 import com.mapleraid.post.adapter.in.web.dto.response.PostResponseDto;
@@ -84,11 +85,11 @@ public class PostQueryController {
      * 내 지원 목록 조회하기
      */
     @GetMapping("/my-applications")
-    public ResponseDto<ApplicationsResponseDto> getMyApplications(
+    public ResponseDto<MyApplicationsListResponseDto> getMyApplications(
             @CurrentUser UserId userId) {
 
         return ResponseDto.ok(
-                ApplicationsResponseDto.from(
+                MyApplicationsListResponseDto.from(
                         readMyApplicationsUseCase.execute(
                                 ReadMyApplicationsInput.of(userId)
                         )
