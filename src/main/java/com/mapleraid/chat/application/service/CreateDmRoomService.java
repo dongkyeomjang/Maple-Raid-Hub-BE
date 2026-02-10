@@ -9,23 +9,19 @@ import com.mapleraid.chat.application.port.out.DirectMessageRoomRepository;
 import com.mapleraid.chat.domain.DirectMessageRoom;
 import com.mapleraid.core.exception.definition.ErrorCode;
 import com.mapleraid.core.exception.type.CommonException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class CreateDmRoomService implements CreateDmRoomUseCase {
 
     private final DirectMessageRoomRepository roomRepository;
     private final CharacterRepository characterRepository;
 
-    public CreateDmRoomService(DirectMessageRoomRepository roomRepository,
-                               CharacterRepository characterRepository) {
-        this.roomRepository = roomRepository;
-        this.characterRepository = characterRepository;
-    }
-
     @Override
+    @Transactional
     public CreateDmRoomResult execute(CreateDmRoomInput input) {
         boolean hasVerifiedCharacter = characterRepository.findByOwnerId(input.getRequesterId()).stream()
                 .anyMatch(c -> c.getVerificationStatus() == EVerificationStatus.VERIFIED_OWNER);

@@ -7,20 +7,18 @@ import com.mapleraid.chat.application.port.out.DirectMessageRoomRepository;
 import com.mapleraid.chat.domain.DirectMessageRoom;
 import com.mapleraid.core.exception.definition.ErrorCode;
 import com.mapleraid.core.exception.type.CommonException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReadDmRoomService implements ReadDmRoomUseCase {
 
     private final DirectMessageRoomRepository roomRepository;
 
-    public ReadDmRoomService(DirectMessageRoomRepository roomRepository) {
-        this.roomRepository = roomRepository;
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public ReadDmRoomResult execute(ReadDmRoomInput input) {
         DirectMessageRoom room = roomRepository.findById(input.getRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.DM_ROOM_NOT_FOUND));

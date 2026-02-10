@@ -12,26 +12,20 @@ import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Post;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class CreatePostService implements CreatePostUseCase {
 
     private final PostRepository postRepository;
     private final CharacterRepository characterRepository;
     private final UserRepository userRepository;
 
-    public CreatePostService(PostRepository postRepository,
-                             CharacterRepository characterRepository,
-                             UserRepository userRepository) {
-        this.postRepository = postRepository;
-        this.characterRepository = characterRepository;
-        this.userRepository = userRepository;
-    }
-
     @Override
+    @Transactional
     public CreatePostResult execute(CreatePostInput input) {
         Character character = characterRepository.findById(input.getCharacterId())
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_CHARACTER));

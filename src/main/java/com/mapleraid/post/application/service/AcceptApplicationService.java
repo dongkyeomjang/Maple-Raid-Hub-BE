@@ -2,6 +2,7 @@ package com.mapleraid.post.application.service;
 
 import com.mapleraid.core.exception.definition.ErrorCode;
 import com.mapleraid.core.exception.type.CommonException;
+import com.mapleraid.notification.application.event.ApplicationAcceptedEvent;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyRoom;
 import com.mapleraid.post.application.port.in.input.command.AcceptApplicationInput;
@@ -10,6 +11,8 @@ import com.mapleraid.post.application.port.in.usecase.AcceptApplicationUseCase;
 import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Application;
 import com.mapleraid.post.domain.Post;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,22 +20,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class AcceptApplicationService implements AcceptApplicationUseCase {
 
     private final PostRepository postRepository;
     private final PartyRoomRepository partyRoomRepository;
     private final SimpMessagingTemplate messagingTemplate;
-
-    public AcceptApplicationService(PostRepository postRepository,
-                                    PartyRoomRepository partyRoomRepository,
-                                    SimpMessagingTemplate messagingTemplate) {
-        this.postRepository = postRepository;
-        this.partyRoomRepository = partyRoomRepository;
-        this.messagingTemplate = messagingTemplate;
-    }
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
+    @Transactional
     public AcceptApplicationResult execute(AcceptApplicationInput input) {
         Post post = postRepository.findByIdWithApplications(input.getPostId())
                 .orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));
@@ -82,6 +79,13 @@ public class AcceptApplicationService implements AcceptApplicationUseCase {
                         "/queue/party-room-updates",
                         Map.of("type", "PARTY_ROOM_UPDATED",
                                 "partyRoomId", partyRoom.getId().getValue().toString())));
+
+        String bossName = post.getBossIds().isEmpty() ? "" : post.getBossIds().get(0);
+        eventPublisher.publishEvent(new ApplicationAcceptedEvent(
+                acceptedApp.getApplicantId(),
+                bossName,
+                partyRoom.getId().getValue().toString()
+        ));
 
         return AcceptApplicationResult.from(acceptedApp, partyRoom);
     }

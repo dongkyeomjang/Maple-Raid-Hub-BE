@@ -11,26 +11,20 @@ import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Post;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class UpdatePostService implements UpdatePostUseCase {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CharacterRepository characterRepository;
 
-    public UpdatePostService(PostRepository postRepository,
-                             UserRepository userRepository,
-                             CharacterRepository characterRepository) {
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-        this.characterRepository = characterRepository;
-    }
-
     @Override
+    @Transactional
     public UpdatePostResult execute(UpdatePostInput input) {
         Post post = postRepository.findById(input.getPostId())
                 .orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));

@@ -7,19 +7,17 @@ import com.mapleraid.party.application.port.in.output.result.MarkReadyResult;
 import com.mapleraid.party.application.port.in.usecase.MarkReadyUseCase;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyRoom;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class MarkReadyService implements MarkReadyUseCase {
     private final PartyRoomRepository partyRoomRepository;
 
-    public MarkReadyService(PartyRoomRepository partyRoomRepository) {
-        this.partyRoomRepository = partyRoomRepository;
-    }
-
     @Override
+    @Transactional
     public MarkReadyResult execute(MarkReadyInput input) {
         PartyRoom partyRoom = partyRoomRepository.findById(input.getPartyRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.PARTY_NOT_FOUND));

@@ -18,6 +18,8 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, String> 
 
     Optional<UserJpaEntity> findByProviderAndProviderId(String provider, String providerId);
 
+    Optional<UserJpaEntity> findByDiscordId(String discordId);
+
     @Query("SELECT AVG(u.temperature) FROM UserJpaEntity u")
     BigDecimal findAverageTemperature();
 }

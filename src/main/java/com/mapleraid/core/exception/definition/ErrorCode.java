@@ -58,6 +58,7 @@ public enum ErrorCode {
     PARTY_NOT_ACTIVE(40040, HttpStatus.BAD_REQUEST, "활성 상태의 파티룸이 아닙니다."),
     PARTY_NOT_COMPLETED(40041, HttpStatus.BAD_REQUEST, "완료된 파티만 리뷰를 작성할 수 있습니다."),
     REVIEW_INVALID_TARGET(40042, HttpStatus.BAD_REQUEST, "해당 사용자는 파티 멤버가 아닙니다."),
+    DISCORD_NOT_LINKED(40044, HttpStatus.BAD_REQUEST, "Discord 계정이 연동되어 있지 않습니다."),
 
     // Access Denied Error
     ACCESS_DENIED(40300, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
@@ -103,6 +104,8 @@ public enum ErrorCode {
     APPLICATION_DUPLICATE(40907, HttpStatus.CONFLICT, "이미 지원한 모집글입니다."),
     REVIEW_ALREADY_SUBMITTED(40908, HttpStatus.CONFLICT, "이미 해당 파티원에 대한 리뷰를 작성했습니다."),
     PARTY_ALREADY_MEMBER(40909, HttpStatus.CONFLICT, "이미 파티룸의 멤버입니다."),
+    DISCORD_ALREADY_LINKED(40910, HttpStatus.CONFLICT, "이미 연동된 Discord 계정입니다."),
+    DISCORD_ID_IN_USE(40911, HttpStatus.CONFLICT, "이미 다른 사용자에게 연동된 Discord 계정입니다."),
 
     // Internal Server Error
     INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러입니다."),
@@ -110,6 +113,7 @@ public enum ErrorCode {
     UPLOAD_FILE_ERROR(50002, HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패하였습니다."),
     INTERNAL_SERVER_ERROR_IN_SQL(50006, HttpStatus.INTERNAL_SERVER_ERROR, "SQL 처리 중 에러가 발생하였습니다."),
     CONVERT_FILE_ERROR(50007, HttpStatus.INTERNAL_SERVER_ERROR, "파일 변환에 실패하였습니다."),
+    DISCORD_LINK_FAILED(50003, HttpStatus.INTERNAL_SERVER_ERROR, "Discord 연동에 실패하였습니다."),
 
     // External Server Error
     EXTERNAL_SERVER_ERROR(50200, HttpStatus.BAD_GATEWAY, "시스템 에러입니다. \n잠시후 다시 시도해주세요."),

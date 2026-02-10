@@ -7,19 +7,17 @@ import com.mapleraid.party.application.port.in.output.result.StartReadyCheckResu
 import com.mapleraid.party.application.port.in.usecase.StartReadyCheckUseCase;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyRoom;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class StartReadyCheckService implements StartReadyCheckUseCase {
     private final PartyRoomRepository partyRoomRepository;
 
-    public StartReadyCheckService(PartyRoomRepository partyRoomRepository) {
-        this.partyRoomRepository = partyRoomRepository;
-    }
-
     @Override
+    @Transactional
     public StartReadyCheckResult execute(StartReadyCheckInput input) {
         PartyRoom partyRoom = partyRoomRepository.findById(input.getPartyRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.PARTY_NOT_FOUND));

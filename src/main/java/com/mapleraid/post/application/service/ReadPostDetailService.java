@@ -12,6 +12,7 @@ import com.mapleraid.post.application.port.in.usecase.ReadPostDetailUseCase;
 import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Application;
 import com.mapleraid.post.domain.Post;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,19 +23,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReadPostDetailService implements ReadPostDetailUseCase {
 
     private final PostRepository postRepository;
     private final CharacterRepository characterRepository;
 
-    public ReadPostDetailService(PostRepository postRepository,
-                                 CharacterRepository characterRepository) {
-        this.postRepository = postRepository;
-        this.characterRepository = characterRepository;
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public ReadPostDetailResult execute(ReadPostDetailInput input) {
         Post post = postRepository.findByIdWithApplications(input.getPostId())
                 .orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));

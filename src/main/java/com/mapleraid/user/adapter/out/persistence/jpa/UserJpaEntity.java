@@ -68,6 +68,18 @@ public class UserJpaEntity {
     @Column(name = "last_login_at")
     private Instant lastLoginAt;
 
+    @Column(name = "discord_id", length = 30)
+    private String discordId;
+
+    @Column(name = "discord_username", length = 100)
+    private String discordUsername;
+
+    @Column(name = "discord_notifications_enabled", columnDefinition = "boolean default false")
+    private boolean discordNotificationsEnabled;
+
+    @Column(name = "discord_prompt_dismissed", columnDefinition = "boolean default false")
+    private boolean discordPromptDismissed;
+
     public static UserJpaEntity fromDomain(User user) {
         UserJpaEntity entity = new UserJpaEntity();
         entity.id = user.getId().getValue().toString();
@@ -85,6 +97,10 @@ public class UserJpaEntity {
         entity.createdAt = user.getCreatedAt();
         entity.updatedAt = user.getUpdatedAt();
         entity.lastLoginAt = user.getLastLoginAt();
+        entity.discordId = user.getDiscordId();
+        entity.discordUsername = user.getDiscordUsername();
+        entity.discordNotificationsEnabled = user.isDiscordNotificationsEnabled();
+        entity.discordPromptDismissed = user.isDiscordPromptDismissed();
         return entity;
     }
 
@@ -104,7 +120,11 @@ public class UserJpaEntity {
                 suspendedUntil,
                 createdAt,
                 updatedAt,
-                lastLoginAt
+                lastLoginAt,
+                discordId,
+                discordUsername,
+                discordNotificationsEnabled,
+                discordPromptDismissed
         );
     }
 }

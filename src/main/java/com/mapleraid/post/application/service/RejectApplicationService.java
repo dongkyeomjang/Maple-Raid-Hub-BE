@@ -2,12 +2,15 @@ package com.mapleraid.post.application.service;
 
 import com.mapleraid.core.exception.definition.ErrorCode;
 import com.mapleraid.core.exception.type.CommonException;
+import com.mapleraid.notification.application.event.ApplicationRejectedEvent;
 import com.mapleraid.post.application.port.in.input.command.RejectApplicationInput;
 import com.mapleraid.post.application.port.in.output.result.RejectApplicationResult;
 import com.mapleraid.post.application.port.in.usecase.RejectApplicationUseCase;
 import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Application;
 import com.mapleraid.post.domain.Post;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,19 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class RejectApplicationService implements RejectApplicationUseCase {
 
     private final PostRepository postRepository;
     private final SimpMessagingTemplate messagingTemplate;
-
-    public RejectApplicationService(PostRepository postRepository,
-                                    SimpMessagingTemplate messagingTemplate) {
-        this.postRepository = postRepository;
-        this.messagingTemplate = messagingTemplate;
-    }
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
+    @Transactional
     public RejectApplicationResult execute(RejectApplicationInput input) {
         Post post = postRepository.findByIdWithApplications(input.getPostId())
                 .orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));
@@ -50,6 +49,12 @@ public class RejectApplicationService implements RejectApplicationUseCase {
                 Map.of("type", "APPLICATION_REJECTED",
                         "postId", input.getPostId().getValue().toString(),
                         "applicationId", input.getApplicationId().getValue().toString()));
+
+        String bossName = post.getBossIds().isEmpty() ? "" : post.getBossIds().get(0);
+        eventPublisher.publishEvent(new ApplicationRejectedEvent(
+                rejectedApp.getApplicantId(),
+                bossName
+        ));
 
         return RejectApplicationResult.from(rejectedApp);
     }

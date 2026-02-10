@@ -9,21 +9,18 @@ import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyRoom;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.UserId;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class CompletePartyRoomService implements CompletePartyRoomUseCase {
     private final PartyRoomRepository partyRoomRepository;
     private final UserRepository userRepository;
 
-    public CompletePartyRoomService(PartyRoomRepository partyRoomRepository, UserRepository userRepository) {
-        this.partyRoomRepository = partyRoomRepository;
-        this.userRepository = userRepository;
-    }
-
     @Override
+    @Transactional
     public CompletePartyRoomResult execute(CompletePartyRoomInput input) {
         PartyRoom partyRoom = partyRoomRepository.findById(input.getPartyRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.PARTY_NOT_FOUND));

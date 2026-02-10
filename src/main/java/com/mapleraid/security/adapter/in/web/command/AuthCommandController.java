@@ -8,6 +8,7 @@ import com.mapleraid.core.exception.type.CommonException;
 import com.mapleraid.core.utility.CookieUtil;
 import com.mapleraid.core.utility.HttpServletUtil;
 import com.mapleraid.core.utility.JsonWebTokenUtil;
+import com.mapleraid.notification.application.port.in.usecase.DismissDiscordPromptUseCase;
 import com.mapleraid.security.adapter.in.web.dto.request.CompleteOauthSignupRequestDto;
 import com.mapleraid.security.adapter.in.web.dto.request.LoginRequestDto;
 import com.mapleraid.security.adapter.in.web.dto.request.SignupRequestDto;
@@ -51,6 +52,7 @@ public class AuthCommandController {
     private final LoginUseCase loginUseCase;
     private final CompleteOauthSignupUseCase completeOauthSignupUseCase;
     private final UpdateNicknameUseCase updateNicknameUseCase;
+    private final DismissDiscordPromptUseCase dismissDiscordPromptUseCase;
     private final JsonWebTokenUtil jsonWebTokenUtil;
     private final HttpServletUtil httpServletUtil;
 
@@ -147,6 +149,12 @@ public class AuthCommandController {
         } catch (Exception e) {
             throw new CommonException(ErrorCode.INVALID_TOKEN_ERROR);
         }
+    }
+
+    @PatchMapping("/discord-prompt-dismiss")
+    public ResponseDto<Void> dismissDiscordPrompt(@CurrentUser UserId userId) {
+        dismissDiscordPromptUseCase.execute(userId);
+        return ResponseDto.ok(null);
     }
 
     @PatchMapping("/nickname")

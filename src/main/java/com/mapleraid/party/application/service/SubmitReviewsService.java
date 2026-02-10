@@ -10,27 +10,21 @@ import com.mapleraid.party.domain.PartyRoom;
 import com.mapleraid.review.application.port.out.ReviewRepository;
 import com.mapleraid.review.domain.Review;
 import com.mapleraid.user.application.port.out.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class SubmitReviewsService implements SubmitReviewsUseCase {
     private final PartyRoomRepository partyRoomRepository;
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
 
-    public SubmitReviewsService(PartyRoomRepository partyRoomRepository,
-                                ReviewRepository reviewRepository,
-                                UserRepository userRepository) {
-        this.partyRoomRepository = partyRoomRepository;
-        this.reviewRepository = reviewRepository;
-        this.userRepository = userRepository;
-    }
-
     @Override
+    @Transactional
     public SubmitReviewsResult execute(SubmitReviewsInput input) {
         PartyRoom partyRoom = partyRoomRepository.findById(input.getPartyRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.PARTY_NOT_FOUND));

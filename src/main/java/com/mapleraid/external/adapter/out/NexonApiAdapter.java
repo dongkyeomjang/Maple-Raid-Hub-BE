@@ -3,8 +3,8 @@ package com.mapleraid.external.adapter.out;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mapleraid.external.application.port.out.NexonApiPort;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,25 +23,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class NexonApiAdapter implements NexonApiPort {
-
-    private static final Logger log = LoggerFactory.getLogger(NexonApiAdapter.class);
 
     private static final String BASE_URL = "https://open.api.nexon.com/maplestory/v1";
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final String apiKey;
 
-    public NexonApiAdapter(
-            RestTemplate restTemplate,
-            ObjectMapper objectMapper,
-            @Value("${nexon.api.key}") String apiKey) {
-        this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
-        this.apiKey = apiKey;
-    }
+    @Value("${nexon.api.key}")
+    private String apiKey;
 
     @Override
     public Optional<String> resolveOcid(String characterName, String worldName) {

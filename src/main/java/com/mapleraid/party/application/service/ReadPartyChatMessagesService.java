@@ -8,24 +8,20 @@ import com.mapleraid.party.application.port.in.usecase.ReadPartyChatMessagesUseC
 import com.mapleraid.party.application.port.out.PartyChatMessageRepository;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyRoom;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReadPartyChatMessagesService implements ReadPartyChatMessagesUseCase {
     private final PartyRoomRepository partyRoomRepository;
     private final PartyChatMessageRepository chatMessageRepository;
 
-    public ReadPartyChatMessagesService(PartyRoomRepository partyRoomRepository,
-                                        PartyChatMessageRepository chatMessageRepository) {
-        this.partyRoomRepository = partyRoomRepository;
-        this.chatMessageRepository = chatMessageRepository;
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public ReadPartyChatMessagesResult execute(ReadPartyChatMessagesInput input) {
         PartyRoom partyRoom = partyRoomRepository.findById(input.getPartyRoomId())
                 .orElseThrow(() -> new CommonException(ErrorCode.PARTY_NOT_FOUND));

@@ -24,4 +24,6 @@ public interface UserRepository {
     Map<UserId, User> findAllByIds(List<UserId> ids);
 
     Optional<User> findByProviderAndProviderId(String provider, String providerId);
+
+    Optional<User> findByDiscordId(String discordId);
 }
