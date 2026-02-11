@@ -17,6 +17,7 @@ public record PostResponseDto(
         String characterName,
         String characterImageUrl,
         String worldGroup,
+        String worldName,
         List<String> bossIds,
         int requiredMembers,
         int currentMembers,
@@ -31,7 +32,7 @@ public record PostResponseDto(
     public static PostResponseDto from(CreatePostResult result) {
         return new PostResponseDto(result.getId(), result.getAuthorId(), result.getAuthorNickname(),
                 result.getCharacterId(), result.getCharacterName(), result.getCharacterImageUrl(),
-                result.getWorldGroup(), result.getBossIds(), result.getRequiredMembers(),
+                result.getWorldGroup(), null, result.getBossIds(), result.getRequiredMembers(),
                 result.getCurrentMembers(), result.getPreferredTime(), result.getDescription(),
                 result.getStatus(), result.getPartyRoomId(),
                 result.getCreatedAt(), result.getUpdatedAt(), result.getExpiresAt());
@@ -40,7 +41,7 @@ public record PostResponseDto(
     public static PostResponseDto from(UpdatePostResult result) {
         return new PostResponseDto(result.getId(), result.getAuthorId(), result.getAuthorNickname(),
                 result.getCharacterId(), result.getCharacterName(), result.getCharacterImageUrl(),
-                result.getWorldGroup(), result.getBossIds(), result.getRequiredMembers(),
+                result.getWorldGroup(), null, result.getBossIds(), result.getRequiredMembers(),
                 result.getCurrentMembers(), result.getPreferredTime(), result.getDescription(),
                 result.getStatus(), result.getPartyRoomId(),
                 result.getCreatedAt(), result.getUpdatedAt(), result.getExpiresAt());
@@ -49,7 +50,7 @@ public record PostResponseDto(
     public static PostResponseDto from(ClosePostResult result) {
         return new PostResponseDto(result.getId(), result.getAuthorId(), result.getAuthorNickname(),
                 result.getCharacterId(), result.getCharacterName(), result.getCharacterImageUrl(),
-                result.getWorldGroup(), result.getBossIds(), result.getRequiredMembers(),
+                result.getWorldGroup(), null, result.getBossIds(), result.getRequiredMembers(),
                 result.getCurrentMembers(), result.getPreferredTime(), result.getDescription(),
                 result.getStatus(), result.getPartyRoomId(),
                 result.getCreatedAt(), result.getUpdatedAt(), result.getExpiresAt());
@@ -58,7 +59,7 @@ public record PostResponseDto(
     public static PostResponseDto from(ReadPostListResult.PostSummary summary) {
         return new PostResponseDto(summary.getId(), summary.getAuthorId(), summary.getAuthorNickname(),
                 summary.getCharacterId(), summary.getCharacterName(), summary.getCharacterImageUrl(),
-                summary.getWorldGroup(), summary.getBossIds(), summary.getRequiredMembers(),
+                summary.getWorldGroup(), summary.getWorldName(), summary.getBossIds(), summary.getRequiredMembers(),
                 summary.getCurrentMembers(), summary.getPreferredTime(), summary.getDescription(),
                 summary.getStatus(), summary.getPartyRoomId(),
                 summary.getCreatedAt(), summary.getUpdatedAt(), summary.getExpiresAt());
@@ -67,7 +68,7 @@ public record PostResponseDto(
     public static PostResponseDto from(ReadMyPostsResult.PostSummary summary) {
         return new PostResponseDto(summary.getId(), summary.getAuthorId(), summary.getAuthorNickname(),
                 summary.getCharacterId(), summary.getCharacterName(), summary.getCharacterImageUrl(),
-                summary.getWorldGroup(), summary.getBossIds(), summary.getRequiredMembers(),
+                summary.getWorldGroup(), summary.getWorldName(), summary.getBossIds(), summary.getRequiredMembers(),
                 summary.getCurrentMembers(), summary.getPreferredTime(), summary.getDescription(),
                 summary.getStatus(), summary.getPartyRoomId(),
                 summary.getCreatedAt(), summary.getUpdatedAt(), summary.getExpiresAt());
