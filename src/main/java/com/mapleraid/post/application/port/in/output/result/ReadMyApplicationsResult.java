@@ -35,13 +35,15 @@ public class ReadMyApplicationsResult extends SelfValidating<ReadMyApplicationsR
         private final int currentMembers;
         private final String authorCharacterName;
         private final String authorCharacterImageUrl;
+        private final String authorWorldName;
 
         public ApplicationSummary(String id, String postId, String applicantId, String characterId,
                                   String message, String status,
                                   Instant appliedAt, Instant respondedAt,
                                   List<String> bossIds, String postStatus,
                                   int requiredMembers, int currentMembers,
-                                  String authorCharacterName, String authorCharacterImageUrl) {
+                                  String authorCharacterName, String authorCharacterImageUrl,
+                                  String authorWorldName) {
             this.id = id;
             this.postId = postId;
             this.applicantId = applicantId;
@@ -56,6 +58,7 @@ public class ReadMyApplicationsResult extends SelfValidating<ReadMyApplicationsR
             this.currentMembers = currentMembers;
             this.authorCharacterName = authorCharacterName;
             this.authorCharacterImageUrl = authorCharacterImageUrl;
+            this.authorWorldName = authorWorldName;
         }
     }
 }

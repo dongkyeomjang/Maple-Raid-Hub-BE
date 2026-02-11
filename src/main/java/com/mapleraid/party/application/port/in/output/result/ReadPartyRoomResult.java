@@ -50,18 +50,20 @@ public class ReadPartyRoomResult extends SelfValidating<ReadPartyRoomResult> {
         private final String characterId;
         private final String characterName;
         private final String characterImageUrl;
+        private final String worldName;
         private final boolean isLeader;
         private final boolean isReady;
         private final Instant joinedAt;
         private final int unreadCount;
 
         public MemberInfo(String userId, String characterId, String characterName,
-                          String characterImageUrl, boolean isLeader, boolean isReady,
+                          String characterImageUrl, String worldName, boolean isLeader, boolean isReady,
                           Instant joinedAt, int unreadCount) {
             this.userId = userId;
             this.characterId = characterId;
             this.characterName = characterName;
             this.characterImageUrl = characterImageUrl;
+            this.worldName = worldName;
             this.isLeader = isLeader;
             this.isReady = isReady;
             this.joinedAt = joinedAt;

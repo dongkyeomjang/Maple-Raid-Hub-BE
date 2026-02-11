@@ -56,6 +56,7 @@ public class ReadMyPartyRoomsService implements ReadMyPartyRoomsUseCase {
                                         m.getCharacterId().getValue().toString(),
                                         character != null ? character.getCharacterName() : null,
                                         character != null ? character.getCharacterImageUrl() : null,
+                                        character != null ? character.getWorldName() : null,
                                         m.isLeader(),
                                         m.isReady(),
                                         m.getJoinedAt(),

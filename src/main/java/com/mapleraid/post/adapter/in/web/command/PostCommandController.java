@@ -16,6 +16,7 @@ import com.mapleraid.post.application.port.in.input.command.CreatePostInput;
 import com.mapleraid.post.application.port.in.input.command.DeletePostInput;
 import com.mapleraid.post.application.port.in.input.command.RejectApplicationInput;
 import com.mapleraid.post.application.port.in.input.command.UpdatePostInput;
+import com.mapleraid.post.application.port.in.input.command.WithdrawApplicationInput;
 import com.mapleraid.post.application.port.in.output.result.AcceptApplicationResult;
 import com.mapleraid.post.application.port.in.usecase.AcceptApplicationUseCase;
 import com.mapleraid.post.application.port.in.usecase.ApplyToPostUseCase;
@@ -24,6 +25,7 @@ import com.mapleraid.post.application.port.in.usecase.CreatePostUseCase;
 import com.mapleraid.post.application.port.in.usecase.DeletePostUseCase;
 import com.mapleraid.post.application.port.in.usecase.RejectApplicationUseCase;
 import com.mapleraid.post.application.port.in.usecase.UpdatePostUseCase;
+import com.mapleraid.post.application.port.in.usecase.WithdrawApplicationUseCase;
 import com.mapleraid.post.domain.ApplicationId;
 import com.mapleraid.post.domain.PostId;
 import com.mapleraid.user.domain.UserId;
@@ -48,6 +50,7 @@ public class PostCommandController {
     private final ApplyToPostUseCase applyToPostUseCase;
     private final AcceptApplicationUseCase acceptApplicationUseCase;
     private final RejectApplicationUseCase rejectApplicationUseCase;
+    private final WithdrawApplicationUseCase withdrawApplicationUseCase;
 
     /**
      * 모집글 생성하기
@@ -197,6 +200,28 @@ public class PostCommandController {
                 ApplicationResponseDto.from(
                         rejectApplicationUseCase.execute(
                                 RejectApplicationInput.of(
+                                        PostId.of(postId),
+                                        ApplicationId.of(applicationId),
+                                        userId
+                                )
+                        )
+                )
+        );
+    }
+
+    /**
+     * 지원 취소하기 (지원자가 직접)
+     */
+    @DeleteMapping("/{postId}/applications/{applicationId}")
+    public ResponseDto<ApplicationResponseDto> withdrawApplication(
+            @CurrentUser UserId userId,
+            @PathVariable String postId,
+            @PathVariable String applicationId) {
+
+        return ResponseDto.ok(
+                ApplicationResponseDto.from(
+                        withdrawApplicationUseCase.execute(
+                                WithdrawApplicationInput.of(
                                         PostId.of(postId),
                                         ApplicationId.of(applicationId),
                                         userId

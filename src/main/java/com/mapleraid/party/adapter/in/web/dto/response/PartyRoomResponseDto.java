@@ -29,7 +29,7 @@ public record PartyRoomResponseDto(
         List<MemberResponseDto> members = result.getMembers().stream()
                 .map(m -> new MemberResponseDto(
                         m.getUserId(), m.getCharacterId(), m.getCharacterName(),
-                        m.getCharacterImageUrl(), m.isLeader(), m.isReady(),
+                        m.getCharacterImageUrl(), m.getWorldName(), m.isLeader(), m.isReady(),
                         m.getJoinedAt(), m.getUnreadCount()))
                 .toList();
         return new PartyRoomResponseDto(
@@ -49,7 +49,7 @@ public record PartyRoomResponseDto(
         List<MemberResponseDto> members = summary.getMembers().stream()
                 .map(m -> new MemberResponseDto(
                         m.getUserId(), m.getCharacterId(), m.getCharacterName(),
-                        m.getCharacterImageUrl(), m.isLeader(), m.isReady(),
+                        m.getCharacterImageUrl(), m.getWorldName(), m.isLeader(), m.isReady(),
                         m.getJoinedAt(), m.getUnreadCount()))
                 .toList();
         return new PartyRoomResponseDto(
@@ -126,6 +126,7 @@ public record PartyRoomResponseDto(
             String characterId,
             String characterName,
             String characterImageUrl,
+            String worldName,
             boolean isLeader,
             boolean isReady,
             Instant joinedAt,

@@ -72,7 +72,8 @@ public class ReadMyApplicationsService implements ReadMyApplicationsUseCase {
                             post != null ? post.getRequiredMembers() : 0,
                             post != null ? post.getCurrentMembers() : 0,
                             authorChar != null ? authorChar.getCharacterName() : null,
-                            authorChar != null ? authorChar.getCharacterImageUrl() : null
+                            authorChar != null ? authorChar.getCharacterImageUrl() : null,
+                            authorChar != null ? authorChar.getWorldName() : null
                     );
                 }).toList();
 

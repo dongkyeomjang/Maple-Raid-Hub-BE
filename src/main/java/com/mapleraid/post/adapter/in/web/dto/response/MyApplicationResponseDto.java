@@ -19,7 +19,8 @@ public record MyApplicationResponseDto(
         int requiredMembers,
         int currentMembers,
         String authorCharacterName,
-        String authorCharacterImageUrl
+        String authorCharacterImageUrl,
+        String authorWorldName
 ) {
     public static MyApplicationResponseDto from(ReadMyApplicationsResult.ApplicationSummary summary) {
         return new MyApplicationResponseDto(
@@ -28,7 +29,8 @@ public record MyApplicationResponseDto(
                 summary.getAppliedAt(), summary.getRespondedAt(),
                 summary.getBossIds(), summary.getPostStatus(),
                 summary.getRequiredMembers(), summary.getCurrentMembers(),
-                summary.getAuthorCharacterName(), summary.getAuthorCharacterImageUrl()
+                summary.getAuthorCharacterName(), summary.getAuthorCharacterImageUrl(),
+                summary.getAuthorWorldName()
         );
     }
 }

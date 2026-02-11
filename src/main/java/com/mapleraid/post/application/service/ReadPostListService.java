@@ -83,6 +83,7 @@ public class ReadPostListService implements ReadPostListUseCase {
                             character != null ? character.getCharacterName() : null,
                             character != null ? character.getCharacterImageUrl() : null,
                             post.getWorldGroup().name(),
+                            character != null ? character.getWorldName() : null,
                             post.getBossIds(),
                             post.getRequiredMembers(),
                             post.getCurrentMembers(),
