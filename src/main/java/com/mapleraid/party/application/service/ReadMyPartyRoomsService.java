@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,9 +33,9 @@ public class ReadMyPartyRoomsService implements ReadMyPartyRoomsUseCase {
     public ReadMyPartyRoomsResult execute(ReadMyPartyRoomsInput input) {
         List<PartyRoom> rooms;
         if (input.getStatus() != null) {
-            rooms = partyRoomRepository.findByMemberUserIdAndStatus(input.getUserId(), input.getStatus());
+            rooms = new java.util.ArrayList<>(partyRoomRepository.findByMemberUserIdAndStatus(input.getUserId(), input.getStatus()));
         } else {
-            rooms = partyRoomRepository.findByMemberUserId(input.getUserId());
+            rooms = new java.util.ArrayList<>(partyRoomRepository.findByMemberUserId(input.getUserId()));
         }
 
         // 모든 활성 멤버의 characterId를 수집하여 일괄 조회
@@ -45,6 +46,9 @@ public class ReadMyPartyRoomsService implements ReadMyPartyRoomsUseCase {
 
         Map<CharacterId, Character> characterMap = characterRepository.findByIds(allCharacterIds).stream()
                 .collect(Collectors.toMap(Character::getId, c -> c));
+
+        // 최근 생성순 정렬
+        rooms.sort(Comparator.comparing(PartyRoom::getCreatedAt).reversed());
 
         List<ReadMyPartyRoomsResult.PartyRoomSummary> summaries = rooms.stream()
                 .map(room -> {

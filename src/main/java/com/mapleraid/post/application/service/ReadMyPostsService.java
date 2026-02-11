@@ -8,6 +8,7 @@ import com.mapleraid.post.application.port.in.output.result.ReadMyPostsResult;
 import com.mapleraid.post.application.port.in.usecase.ReadMyPostsUseCase;
 import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Post;
+import com.mapleraid.post.domain.PostStatus;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
 import com.mapleraid.user.domain.UserId;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +33,7 @@ public class ReadMyPostsService implements ReadMyPostsUseCase {
     @Override
     @Transactional(readOnly = true)
     public ReadMyPostsResult execute(ReadMyPostsInput input) {
-        List<Post> posts = postRepository.findByAuthorId(input.getUserId());
+        List<Post> posts = new java.util.ArrayList<>(postRepository.findByAuthorId(input.getUserId()));
 
         // Collect IDs for batch fetch
         Set<CharacterId> charIds = posts.stream()
@@ -46,6 +48,11 @@ public class ReadMyPostsService implements ReadMyPostsUseCase {
         Map<UserId, User> userMap = userRepository.findAllByIds(userIds);
         Map<CharacterId, Character> charMap = characterRepository.findByIds(charIds).stream()
                 .collect(Collectors.toMap(Character::getId, c -> c));
+
+        // RECRUITING 먼저, 나머지는 뒤로 (각 그룹 내에서는 createdAt DESC 유지)
+        posts.sort(Comparator
+                .comparing((Post p) -> p.getStatus() != PostStatus.RECRUITING ? 1 : 0)
+                .thenComparing(Post::getCreatedAt, Comparator.reverseOrder()));
 
         // Build summaries with enriched data
         List<ReadMyPostsResult.PostSummary> summaries = posts.stream()
