@@ -35,7 +35,7 @@ public record PostDetailResponseDto(
                 c.getId(), c.getCharacterName(), c.getWorldName(), c.getWorldGroup(),
                 c.getCharacterClass(), c.getCharacterLevel(), c.getCharacterImageUrl(),
                 c.getCombatPower(), c.getEquipmentJson(), c.getVerificationStatus(),
-                c.getLastSyncedAt());
+                c.getLastSyncedAt(), c.getOwnerTemperature());
     }
 
     public record PostInfo(
@@ -78,7 +78,8 @@ public record PostDetailResponseDto(
             long combatPower,
             String equipmentJson,
             String verificationStatus,
-            LocalDateTime lastSyncedAt
+            LocalDateTime lastSyncedAt,
+            double ownerTemperature
     ) {
     }
 }

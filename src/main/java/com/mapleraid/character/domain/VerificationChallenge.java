@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class VerificationChallenge {
 
     private static final Duration CHALLENGE_DURATION = Duration.ofMinutes(30);
-    private static final Duration MIN_CHECK_INTERVAL = Duration.ofSeconds(30);
+    private static final Duration MIN_CHECK_INTERVAL = Duration.ofSeconds(10);
     private static final Duration CHECK_INTERVAL_TOLERANCE = Duration.ofSeconds(3);
     private static final int MAX_CHECK_COUNT = 10;
 

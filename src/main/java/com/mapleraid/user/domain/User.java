@@ -123,18 +123,30 @@ public class User {
     }
 
     /**
-     * 온도 조정
+     * 온도 조정 (레거시 - 직접 delta 적용)
      */
     public void adjustTemperature(BigDecimal delta) {
         this.temperature = this.temperature.add(delta);
-        // 범위 제한 (0 ~ 100)
+        clampTemperature();
+        this.updatedAt = Instant.now();
+    }
+
+    /**
+     * 온도 직접 설정 (비율+신뢰도 기반 재계산 결과 반영)
+     */
+    public void setTemperature(BigDecimal newTemperature) {
+        this.temperature = newTemperature;
+        clampTemperature();
+        this.updatedAt = Instant.now();
+    }
+
+    private void clampTemperature() {
         if (this.temperature.compareTo(BigDecimal.ZERO) < 0) {
             this.temperature = BigDecimal.ZERO;
         }
-        if (this.temperature.compareTo(new BigDecimal("100")) > 0) {
-            this.temperature = new BigDecimal("100");
+        if (this.temperature.compareTo(new BigDecimal("99")) > 0) {
+            this.temperature = new BigDecimal("99");
         }
-        this.updatedAt = Instant.now();
     }
 
     /**

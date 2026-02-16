@@ -96,11 +96,13 @@ public class ReadPostDetailResult extends SelfValidating<ReadPostDetailResult> {
         private final String equipmentJson;
         private final String verificationStatus;
         private final LocalDateTime lastSyncedAt;
+        private final double ownerTemperature;
 
         public CharacterSummary(String id, String characterName, String worldName,
                                 String worldGroup, String characterClass, int characterLevel,
                                 String characterImageUrl, long combatPower, String equipmentJson,
-                                String verificationStatus, LocalDateTime lastSyncedAt) {
+                                String verificationStatus, LocalDateTime lastSyncedAt,
+                                double ownerTemperature) {
             this.id = id;
             this.characterName = characterName;
             this.worldName = worldName;
@@ -112,6 +114,7 @@ public class ReadPostDetailResult extends SelfValidating<ReadPostDetailResult> {
             this.equipmentJson = equipmentJson;
             this.verificationStatus = verificationStatus;
             this.lastSyncedAt = lastSyncedAt;
+            this.ownerTemperature = ownerTemperature;
         }
     }
 }

@@ -12,6 +12,9 @@ import com.mapleraid.post.application.port.in.usecase.ReadPostDetailUseCase;
 import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Application;
 import com.mapleraid.post.domain.Post;
+import com.mapleraid.user.application.port.out.UserRepository;
+import com.mapleraid.user.domain.User;
+import com.mapleraid.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,7 @@ public class ReadPostDetailService implements ReadPostDetailUseCase {
 
     private final PostRepository postRepository;
     private final CharacterRepository characterRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -46,21 +50,36 @@ public class ReadPostDetailService implements ReadPostDetailUseCase {
         Map<CharacterId, Character> characterMap = characterRepository.findByIds(characterIds).stream()
                 .collect(Collectors.toMap(Character::getId, c -> c));
 
+        // 소유자 ID 수집 및 배치 조회
+        List<UserId> ownerIdList = characterMap.values().stream()
+                .map(Character::getOwnerId)
+                .distinct()
+                .toList();
+        Map<UserId, User> userMap = userRepository.findAllByIds(ownerIdList);
+
         // 작성자 캐릭터
-        CharacterSummary authorCharacter = toCharacterSummary(characterMap.get(post.getCharacterId()));
+        Character authorChar = characterMap.get(post.getCharacterId());
+        double authorTemperature = authorChar != null && userMap.containsKey(authorChar.getOwnerId())
+                ? userMap.get(authorChar.getOwnerId()).getTemperature() : 0.0;
+        CharacterSummary authorCharacter = toCharacterSummary(authorChar, authorTemperature);
 
         // 지원 목록 (캐릭터 정보 포함)
         List<ReadPostDetailResult.ApplicationSummary> appSummaries = post.getApplications().stream()
-                .map(app -> new ReadPostDetailResult.ApplicationSummary(
-                        app.getId().getValue().toString(),
-                        app.getApplicantId().getValue().toString(),
-                        app.getCharacterId().getValue().toString(),
-                        app.getMessage(),
-                        app.getStatus().name(),
-                        app.getAppliedAt(),
-                        app.getRespondedAt(),
-                        toCharacterSummary(characterMap.get(app.getCharacterId()))
-                ))
+                .map(app -> {
+                    Character appChar = characterMap.get(app.getCharacterId());
+                    double temperature = appChar != null && userMap.containsKey(appChar.getOwnerId())
+                            ? userMap.get(appChar.getOwnerId()).getTemperature() : 0.0;
+                    return new ReadPostDetailResult.ApplicationSummary(
+                            app.getId().getValue().toString(),
+                            app.getApplicantId().getValue().toString(),
+                            app.getCharacterId().getValue().toString(),
+                            app.getMessage(),
+                            app.getStatus().name(),
+                            app.getAppliedAt(),
+                            app.getRespondedAt(),
+                            toCharacterSummary(appChar, temperature)
+                    );
+                })
                 .toList();
 
         return new ReadPostDetailResult(
@@ -83,7 +102,7 @@ public class ReadPostDetailService implements ReadPostDetailUseCase {
                 authorCharacter);
     }
 
-    private CharacterSummary toCharacterSummary(Character c) {
+    private CharacterSummary toCharacterSummary(Character c, double temperature) {
         if (c == null) return null;
         return new CharacterSummary(
                 c.getId().getValue().toString(),
@@ -96,6 +115,7 @@ public class ReadPostDetailService implements ReadPostDetailUseCase {
                 c.getCombatPower(),
                 c.getEquipmentJson(),
                 c.getVerificationStatus().name(),
-                c.getLastSyncedAt());
+                c.getLastSyncedAt(),
+                temperature);
     }
 }

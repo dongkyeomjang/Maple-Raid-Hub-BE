@@ -4,10 +4,8 @@ import com.mapleraid.core.annotation.bean.CurrentUser;
 import com.mapleraid.core.dto.ResponseDto;
 import com.mapleraid.party.adapter.in.web.dto.request.AvailabilityRequestDto;
 import com.mapleraid.party.adapter.in.web.dto.request.ConfirmScheduleRequestDto;
-import com.mapleraid.party.adapter.in.web.dto.request.ReviewRequestDto;
 import com.mapleraid.party.adapter.in.web.dto.response.AvailabilityResponseDto;
 import com.mapleraid.party.adapter.in.web.dto.response.PartyRoomResponseDto;
-import com.mapleraid.party.adapter.in.web.dto.response.ReviewResponseDto;
 import com.mapleraid.party.application.port.in.input.command.CompletePartyRoomInput;
 import com.mapleraid.party.application.port.in.input.command.ConfirmScheduleInput;
 import com.mapleraid.party.application.port.in.input.command.LeavePartyRoomInput;
@@ -15,9 +13,7 @@ import com.mapleraid.party.application.port.in.input.command.MarkPartyChatAsRead
 import com.mapleraid.party.application.port.in.input.command.MarkReadyInput;
 import com.mapleraid.party.application.port.in.input.command.SaveAvailabilityInput;
 import com.mapleraid.party.application.port.in.input.command.StartReadyCheckInput;
-import com.mapleraid.party.application.port.in.input.command.SubmitReviewsInput;
 import com.mapleraid.party.application.port.in.output.result.SaveAvailabilityResult;
-import com.mapleraid.party.application.port.in.output.result.SubmitReviewsResult;
 import com.mapleraid.party.application.port.in.usecase.CompletePartyRoomUseCase;
 import com.mapleraid.party.application.port.in.usecase.ConfirmScheduleUseCase;
 import com.mapleraid.party.application.port.in.usecase.LeavePartyRoomUseCase;
@@ -25,7 +21,6 @@ import com.mapleraid.party.application.port.in.usecase.MarkPartyChatAsReadUseCas
 import com.mapleraid.party.application.port.in.usecase.MarkReadyUseCase;
 import com.mapleraid.party.application.port.in.usecase.SaveAvailabilityUseCase;
 import com.mapleraid.party.application.port.in.usecase.StartReadyCheckUseCase;
-import com.mapleraid.party.application.port.in.usecase.SubmitReviewsUseCase;
 import com.mapleraid.party.domain.Availability;
 import com.mapleraid.party.domain.PartyRoomId;
 import com.mapleraid.user.domain.UserId;
@@ -49,7 +44,6 @@ public class PartyCommandController {
     private final StartReadyCheckUseCase startReadyCheckUseCase;
     private final MarkReadyUseCase markReadyUseCase;
     private final MarkPartyChatAsReadUseCase markPartyChatAsReadUseCase;
-    private final SubmitReviewsUseCase submitReviewsUseCase;
     private final SaveAvailabilityUseCase saveAvailabilityUseCase;
     private final ConfirmScheduleUseCase confirmScheduleUseCase;
 
@@ -145,26 +139,6 @@ public class PartyCommandController {
                 )
         );
         return ResponseDto.ok(null);
-    }
-
-    /**
-     * 리뷰 제출하기
-     */
-    @PostMapping("/{partyRoomId}/reviews")
-    public ResponseDto<List<ReviewResponseDto>> submitReviews(
-            @CurrentUser UserId userId,
-            @PathVariable String partyRoomId,
-            @RequestBody List<ReviewRequestDto> requests) {
-
-        List<SubmitReviewsInput.ReviewItem> items = requests.stream()
-                .map(r -> new SubmitReviewsInput.ReviewItem(UserId.of(r.targetUserId()), r.tags(), r.comment()))
-                .toList();
-        SubmitReviewsResult result = submitReviewsUseCase.execute(
-                SubmitReviewsInput.of(PartyRoomId.of(partyRoomId), userId, items));
-        List<ReviewResponseDto> responses = result.getReviews().stream()
-                .map(ReviewResponseDto::from)
-                .toList();
-        return ResponseDto.ok(responses);
     }
 
     /**
