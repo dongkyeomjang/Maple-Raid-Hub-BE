@@ -18,16 +18,14 @@ public class GetMyEvaluationsResult {
     @Getter
     public static class EvaluationDetail {
         private final String id;
-        private final String evaluatorNickname;
         private final String context;
         private final List<String> tags;
         private final BigDecimal temperatureChange;
         private final Instant createdAt;
 
-        public EvaluationDetail(String id, String evaluatorNickname, String context,
+        public EvaluationDetail(String id, String context,
                                 List<String> tags, BigDecimal temperatureChange, Instant createdAt) {
             this.id = id;
-            this.evaluatorNickname = evaluatorNickname;
             this.context = context;
             this.tags = tags;
             this.temperatureChange = temperatureChange;

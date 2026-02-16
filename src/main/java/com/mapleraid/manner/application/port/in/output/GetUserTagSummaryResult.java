@@ -9,10 +9,12 @@ public class GetUserTagSummaryResult {
 
     private final List<TagCount> tagCounts;
     private final int totalEvaluations;
+    private final double temperature;
 
-    public GetUserTagSummaryResult(List<TagCount> tagCounts, int totalEvaluations) {
+    public GetUserTagSummaryResult(List<TagCount> tagCounts, int totalEvaluations, double temperature) {
         this.tagCounts = tagCounts;
         this.totalEvaluations = totalEvaluations;
+        this.temperature = temperature;
     }
 
     @Getter

@@ -5,6 +5,8 @@ import com.mapleraid.manner.application.port.in.usecase.GetUserTagSummaryUseCase
 import com.mapleraid.manner.application.port.out.MannerEvaluationRepository;
 import com.mapleraid.manner.domain.MannerEvaluation;
 import com.mapleraid.manner.domain.MannerTag;
+import com.mapleraid.user.application.port.out.UserRepository;
+import com.mapleraid.user.domain.User;
 import com.mapleraid.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class GetUserTagSummaryService implements GetUserTagSummaryUseCase {
 
     private final MannerEvaluationRepository mannerEvaluationRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -37,6 +40,10 @@ public class GetUserTagSummaryService implements GetUserTagSummaryUseCase {
                 .map(e -> new GetUserTagSummaryResult.TagCount(e.getKey(), e.getValue()))
                 .toList();
 
-        return new GetUserTagSummaryResult(tagCounts, evaluations.size());
+        double temperature = userRepository.findById(targetUserId)
+                .map(User::getTemperature)
+                .orElse(36.5);
+
+        return new GetUserTagSummaryResult(tagCounts, evaluations.size(), temperature);
     }
 }

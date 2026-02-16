@@ -8,7 +8,6 @@ import java.util.List;
 
 public record MyEvaluationDetailDto(
         String id,
-        String evaluatorNickname,
         String context,
         List<String> tags,
         BigDecimal temperatureChange,
@@ -17,7 +16,6 @@ public record MyEvaluationDetailDto(
     public static MyEvaluationDetailDto from(GetMyEvaluationsResult.EvaluationDetail detail) {
         return new MyEvaluationDetailDto(
                 detail.getId(),
-                detail.getEvaluatorNickname(),
                 detail.getContext(),
                 detail.getTags(),
                 detail.getTemperatureChange(),

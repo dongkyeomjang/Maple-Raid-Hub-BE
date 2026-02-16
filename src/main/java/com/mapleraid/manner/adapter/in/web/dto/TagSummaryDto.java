@@ -6,14 +6,16 @@ import java.util.List;
 
 public record TagSummaryDto(
         List<TagCountDto> tagCounts,
-        int totalEvaluations
+        int totalEvaluations,
+        double temperature
 ) {
     public static TagSummaryDto from(GetUserTagSummaryResult result) {
         return new TagSummaryDto(
                 result.getTagCounts().stream()
                         .map(tc -> new TagCountDto(tc.getTag(), tc.getCount()))
                         .toList(),
-                result.getTotalEvaluations()
+                result.getTotalEvaluations(),
+                result.getTemperature()
         );
     }
 
