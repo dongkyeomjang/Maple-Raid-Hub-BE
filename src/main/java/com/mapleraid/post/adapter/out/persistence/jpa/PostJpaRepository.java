@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,6 +66,9 @@ public interface PostJpaRepository extends JpaRepository<PostJpaEntity, String> 
             @Param("status") PostStatus status,
             @Param("bossIds") List<String> bossIds,
             @Param("bossIdCount") long bossIdCount);
+
+    @Query("SELECT DISTINCT p FROM PostJpaEntity p LEFT JOIN FETCH p.applications WHERE p.status = 'RECRUITING' AND p.expiresAt < :now")
+    List<PostJpaEntity> findExpiredRecruiting(@Param("now") Instant now);
 
     @Query("SELECT DISTINCT p FROM PostJpaEntity p LEFT JOIN FETCH p.applications a WHERE a.applicantId = :applicantId")
     List<PostJpaEntity> findByApplicationsApplicantId(@Param("applicantId") String applicantId);

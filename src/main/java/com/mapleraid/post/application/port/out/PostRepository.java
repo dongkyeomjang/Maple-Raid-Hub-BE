@@ -7,6 +7,7 @@ import com.mapleraid.post.domain.PostId;
 import com.mapleraid.post.domain.PostStatus;
 import com.mapleraid.user.domain.UserId;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,8 @@ public interface PostRepository {
     long countByStatusAndBossIds(PostStatus status, List<String> bossIds);
 
     long countByWorldGroupAndStatusAndBossIds(EWorldGroup worldGroup, PostStatus status, List<String> bossIds);
+
+    List<Post> findExpiredRecruiting(Instant now);
 
     List<Application> findApplicationsByApplicantId(UserId applicantId);
 

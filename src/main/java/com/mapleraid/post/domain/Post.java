@@ -267,14 +267,21 @@ public class Post {
 
     /**
      * 만료 체크 및 처리
+     * - 파티원이 있으면 (currentMembers >= 2) 자동 마감 (CLOSED)
+     * - 작성자 혼자면 만료 (EXPIRED)
      */
     public boolean checkAndExpire() {
         if (status == PostStatus.RECRUITING && Instant.now().isAfter(expiresAt)) {
-            this.status = PostStatus.EXPIRED;
-            this.closedAt = Instant.now();
-            applications.stream()
-                    .filter(Application::isPending)
-                    .forEach(Application::cancelByPost);
+            if (currentMembers >= 2) {
+                close();
+            } else {
+                this.status = PostStatus.EXPIRED;
+                this.closedAt = Instant.now();
+                this.updatedAt = Instant.now();
+                applications.stream()
+                        .filter(Application::isPending)
+                        .forEach(Application::cancelByPost);
+            }
             return true;
         }
         return false;

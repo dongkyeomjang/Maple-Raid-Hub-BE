@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,6 +95,13 @@ public class PostPersistenceAdapter implements PostRepository {
     @Override
     public long countByWorldGroupAndStatusAndBossIds(EWorldGroup worldGroup, PostStatus status, List<String> bossIds) {
         return jpaRepository.countByWorldGroupAndStatusAndBossIdsContainingAll(worldGroup, status, bossIds, bossIds.size());
+    }
+
+    @Override
+    public List<Post> findExpiredRecruiting(Instant now) {
+        return jpaRepository.findExpiredRecruiting(now).stream()
+                .map(PostJpaEntity::toDomain)
+                .toList();
     }
 
     @Override
