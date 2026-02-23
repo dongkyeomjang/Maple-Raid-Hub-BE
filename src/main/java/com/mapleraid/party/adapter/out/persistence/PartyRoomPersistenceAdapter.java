@@ -65,4 +65,24 @@ public class PartyRoomPersistenceAdapter implements PartyRoomRepository {
                 .map(PartyRoomJpaEntity::toDomain)
                 .toList();
     }
+
+    @Override
+    public void clearMemberUnreadCount(PartyRoomId partyRoomId, UserId userId) {
+        entityManager.createQuery(
+                "UPDATE PartyMemberJpaEntity m SET m.unreadCount = 0 " +
+                "WHERE m.partyRoom.id = :roomId AND m.userId = :userId AND m.leftAt IS NULL")
+                .setParameter("roomId", partyRoomId.getValue().toString())
+                .setParameter("userId", userId.getValue().toString())
+                .executeUpdate();
+    }
+
+    @Override
+    public void incrementMemberUnreadCountExcept(PartyRoomId partyRoomId, UserId senderId) {
+        entityManager.createQuery(
+                "UPDATE PartyMemberJpaEntity m SET m.unreadCount = m.unreadCount + 1 " +
+                "WHERE m.partyRoom.id = :roomId AND m.userId != :senderId AND m.leftAt IS NULL")
+                .setParameter("roomId", partyRoomId.getValue().toString())
+                .setParameter("senderId", senderId.getValue().toString())
+                .executeUpdate();
+    }
 }

@@ -23,7 +23,6 @@ public class MarkPartyChatAsReadService implements MarkPartyChatAsReadUseCase {
         if (!partyRoom.isMember(input.getUserId())) {
             throw new CommonException(ErrorCode.PARTY_NOT_MEMBER);
         }
-        partyRoom.clearUnreadCount(input.getUserId());
-        partyRoomRepository.save(partyRoom);
+        partyRoomRepository.clearMemberUnreadCount(input.getPartyRoomId(), input.getUserId());
     }
 }

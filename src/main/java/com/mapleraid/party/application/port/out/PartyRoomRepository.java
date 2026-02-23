@@ -20,4 +20,8 @@ public interface PartyRoomRepository {
     List<PartyRoom> findByMemberUserId(UserId userId);
 
     List<PartyRoom> findByMemberUserIdAndStatus(UserId userId, PartyRoomStatus status);
+
+    void clearMemberUnreadCount(PartyRoomId partyRoomId, UserId userId);
+
+    void incrementMemberUnreadCountExcept(PartyRoomId partyRoomId, UserId senderId);
 }

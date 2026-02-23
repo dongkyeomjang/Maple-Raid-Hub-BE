@@ -7,6 +7,7 @@ import com.mapleraid.party.application.port.in.output.result.SendPartyChatMessag
 import com.mapleraid.party.application.port.in.usecase.SendPartyChatMessageUseCase;
 import com.mapleraid.party.application.port.out.PartyChatMessageRepository;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
+import com.mapleraid.party.domain.PartyMember;
 import com.mapleraid.party.domain.PartyRoom;
 import com.mapleraid.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
@@ -40,11 +41,10 @@ public class SendPartyChatMessageService implements SendPartyChatMessageUseCase 
                 "CHAT"
         );
 
-        partyRoom.incrementUnreadCountExcept(input.getSenderId());
-        partyRoomRepository.save(partyRoom);
+        partyRoomRepository.incrementMemberUnreadCountExcept(input.getPartyRoomId(), input.getSenderId());
 
         List<UserId> otherMemberIds = partyRoom.getActiveMembers().stream()
-                .map(m -> m.getUserId())
+                .map(PartyMember::getUserId)
                 .filter(id -> !id.equals(input.getSenderId()))
                 .toList();
 
