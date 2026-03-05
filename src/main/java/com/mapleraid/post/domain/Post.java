@@ -215,15 +215,30 @@ public class Post {
      * 모집글 취소
      */
     public void cancel() {
-        if (partyRoomId != null) {
-            throw new CommonException(ErrorCode.POST_HAS_PARTY_ROOM);
+        this.status = PostStatus.CANCELED;
+        this.closedAt = Instant.now();
+        this.updatedAt = Instant.now();
+
+        // 대기 중인 모든 지원 취소
+        applications.stream()
+                .filter(Application::isPending)
+                .forEach(Application::cancelByPost);
+    }
+
+    /**
+     * 파티 종료에 의한 모집글 취소
+     * - 파티가 종료되면 더 이상 모집이 불필요하므로 모집글도 취소
+     * - 이미 마감/취소/만료된 경우 무시
+     */
+    public void cancelByPartyCompletion() {
+        if (status != PostStatus.RECRUITING) {
+            return;
         }
 
         this.status = PostStatus.CANCELED;
         this.closedAt = Instant.now();
         this.updatedAt = Instant.now();
 
-        // 대기 중인 모든 지원 취소
         applications.stream()
                 .filter(Application::isPending)
                 .forEach(Application::cancelByPost);

@@ -117,7 +117,7 @@ public class PostPersistenceAdapter implements PostRepository {
 
     @Override
     public List<Post> findByAuthorId(UserId authorId) {
-        return jpaRepository.findByAuthorIdOrderByCreatedAtDesc(
+        return jpaRepository.findByAuthorIdWithApplications(
                         authorId.getValue().toString())
                 .stream()
                 .map(PostJpaEntity::toDomain)

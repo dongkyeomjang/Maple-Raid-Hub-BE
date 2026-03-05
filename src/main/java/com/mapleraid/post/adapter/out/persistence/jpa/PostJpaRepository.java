@@ -29,6 +29,9 @@ public interface PostJpaRepository extends JpaRepository<PostJpaEntity, String> 
 
     List<PostJpaEntity> findByAuthorIdOrderByCreatedAtDesc(String authorId);
 
+    @Query("SELECT DISTINCT p FROM PostJpaEntity p LEFT JOIN FETCH p.applications WHERE p.authorId = :authorId ORDER BY p.createdAt DESC")
+    List<PostJpaEntity> findByAuthorIdWithApplications(@Param("authorId") String authorId);
+
     List<PostJpaEntity> findByAuthorIdAndStatusOrderByCreatedAtDesc(String authorId, PostStatus status);
 
     @Query("SELECT DISTINCT p FROM PostJpaEntity p WHERE p.status = :status " +

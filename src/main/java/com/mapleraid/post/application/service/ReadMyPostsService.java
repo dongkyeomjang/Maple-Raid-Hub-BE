@@ -7,6 +7,7 @@ import com.mapleraid.post.application.port.in.input.query.ReadMyPostsInput;
 import com.mapleraid.post.application.port.in.output.result.ReadMyPostsResult;
 import com.mapleraid.post.application.port.in.usecase.ReadMyPostsUseCase;
 import com.mapleraid.post.application.port.out.PostRepository;
+import com.mapleraid.post.domain.Application;
 import com.mapleraid.post.domain.Post;
 import com.mapleraid.post.domain.PostStatus;
 import com.mapleraid.user.application.port.out.UserRepository;
@@ -59,6 +60,9 @@ public class ReadMyPostsService implements ReadMyPostsUseCase {
                 .map(post -> {
                     User author = userMap.get(post.getAuthorId());
                     Character character = charMap.get(post.getCharacterId());
+                    int pendingCount = (int) post.getApplications().stream()
+                            .filter(Application::isPending)
+                            .count();
                     return new ReadMyPostsResult.PostSummary(
                             post.getId().getValue().toString(),
                             post.getAuthorId().getValue().toString(),
@@ -77,7 +81,8 @@ public class ReadMyPostsService implements ReadMyPostsUseCase {
                             post.getPartyRoomId() != null ? post.getPartyRoomId().getValue().toString() : null,
                             post.getCreatedAt(),
                             post.getUpdatedAt(),
-                            post.getExpiresAt()
+                            post.getExpiresAt(),
+                            pendingCount
                     );
                 }).toList();
 

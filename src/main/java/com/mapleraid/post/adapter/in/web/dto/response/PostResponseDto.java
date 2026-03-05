@@ -27,7 +27,8 @@ public record PostResponseDto(
         String partyRoomId,
         Instant createdAt,
         Instant updatedAt,
-        Instant expiresAt
+        Instant expiresAt,
+        int pendingApplicationCount
 ) {
     public static PostResponseDto from(CreatePostResult result) {
         return new PostResponseDto(result.getId(), result.getAuthorId(), result.getAuthorNickname(),
@@ -35,7 +36,7 @@ public record PostResponseDto(
                 result.getWorldGroup(), null, result.getBossIds(), result.getRequiredMembers(),
                 result.getCurrentMembers(), result.getPreferredTime(), result.getDescription(),
                 result.getStatus(), result.getPartyRoomId(),
-                result.getCreatedAt(), result.getUpdatedAt(), result.getExpiresAt());
+                result.getCreatedAt(), result.getUpdatedAt(), result.getExpiresAt(), 0);
     }
 
     public static PostResponseDto from(UpdatePostResult result) {
@@ -44,7 +45,7 @@ public record PostResponseDto(
                 result.getWorldGroup(), null, result.getBossIds(), result.getRequiredMembers(),
                 result.getCurrentMembers(), result.getPreferredTime(), result.getDescription(),
                 result.getStatus(), result.getPartyRoomId(),
-                result.getCreatedAt(), result.getUpdatedAt(), result.getExpiresAt());
+                result.getCreatedAt(), result.getUpdatedAt(), result.getExpiresAt(), 0);
     }
 
     public static PostResponseDto from(ClosePostResult result) {
@@ -53,7 +54,7 @@ public record PostResponseDto(
                 result.getWorldGroup(), null, result.getBossIds(), result.getRequiredMembers(),
                 result.getCurrentMembers(), result.getPreferredTime(), result.getDescription(),
                 result.getStatus(), result.getPartyRoomId(),
-                result.getCreatedAt(), result.getUpdatedAt(), result.getExpiresAt());
+                result.getCreatedAt(), result.getUpdatedAt(), result.getExpiresAt(), 0);
     }
 
     public static PostResponseDto from(ReadPostListResult.PostSummary summary) {
@@ -62,7 +63,7 @@ public record PostResponseDto(
                 summary.getWorldGroup(), summary.getWorldName(), summary.getBossIds(), summary.getRequiredMembers(),
                 summary.getCurrentMembers(), summary.getPreferredTime(), summary.getDescription(),
                 summary.getStatus(), summary.getPartyRoomId(),
-                summary.getCreatedAt(), summary.getUpdatedAt(), summary.getExpiresAt());
+                summary.getCreatedAt(), summary.getUpdatedAt(), summary.getExpiresAt(), 0);
     }
 
     public static PostResponseDto from(ReadMyPostsResult.PostSummary summary) {
@@ -71,6 +72,7 @@ public record PostResponseDto(
                 summary.getWorldGroup(), summary.getWorldName(), summary.getBossIds(), summary.getRequiredMembers(),
                 summary.getCurrentMembers(), summary.getPreferredTime(), summary.getDescription(),
                 summary.getStatus(), summary.getPartyRoomId(),
-                summary.getCreatedAt(), summary.getUpdatedAt(), summary.getExpiresAt());
+                summary.getCreatedAt(), summary.getUpdatedAt(), summary.getExpiresAt(),
+                summary.getPendingApplicationCount());
     }
 }

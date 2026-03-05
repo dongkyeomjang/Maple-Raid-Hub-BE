@@ -37,6 +37,7 @@ public class ReadMyPostsResult extends SelfValidating<ReadMyPostsResult> {
         private final Instant createdAt;
         private final Instant updatedAt;
         private final Instant expiresAt;
+        private final int pendingApplicationCount;
 
         public PostSummary(String id, String authorId, String authorNickname,
                            String characterId, String characterName, String characterImageUrl,
@@ -44,7 +45,8 @@ public class ReadMyPostsResult extends SelfValidating<ReadMyPostsResult> {
                            List<String> bossIds, int requiredMembers, int currentMembers,
                            String preferredTime, String description, String status,
                            String partyRoomId,
-                           Instant createdAt, Instant updatedAt, Instant expiresAt) {
+                           Instant createdAt, Instant updatedAt, Instant expiresAt,
+                           int pendingApplicationCount) {
             this.id = id;
             this.authorId = authorId;
             this.authorNickname = authorNickname;
@@ -63,6 +65,7 @@ public class ReadMyPostsResult extends SelfValidating<ReadMyPostsResult> {
             this.createdAt = createdAt;
             this.updatedAt = updatedAt;
             this.expiresAt = expiresAt;
+            this.pendingApplicationCount = pendingApplicationCount;
         }
     }
 }

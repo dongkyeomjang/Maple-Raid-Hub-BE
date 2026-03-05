@@ -7,6 +7,7 @@ import com.mapleraid.party.application.port.in.output.result.CompletePartyRoomRe
 import com.mapleraid.party.application.port.in.usecase.CompletePartyRoomUseCase;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyRoom;
+import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CompletePartyRoomService implements CompletePartyRoomUseCase {
     private final PartyRoomRepository partyRoomRepository;
+    private final PostRepository postRepository;
     private final UserRepository userRepository;
 
     @Override
@@ -31,6 +33,13 @@ public class CompletePartyRoomService implements CompletePartyRoomUseCase {
                 userRepository.save(user);
             });
         }
+        // 모집글이 아직 모집 중이면 취소 처리
+        postRepository.findByIdWithApplications(partyRoom.getPostId())
+                .ifPresent(post -> {
+                    post.cancelByPartyCompletion();
+                    postRepository.save(post);
+                });
+
         PartyRoom saved = partyRoomRepository.save(partyRoom);
         return CompletePartyRoomResult.from(saved);
     }
