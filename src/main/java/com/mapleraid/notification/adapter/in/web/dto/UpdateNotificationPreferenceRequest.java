@@ -4,5 +4,6 @@ public record UpdateNotificationPreferenceRequest(
         Boolean notifyApplicationReceived,
         Boolean notifyApplicationAccepted,
         Boolean notifyApplicationRejected,
-        Boolean notifyDmReceived
+        Boolean notifyDmReceived,
+        Boolean notifyPartyChatReceived
 ) {}

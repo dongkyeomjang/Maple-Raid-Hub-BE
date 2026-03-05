@@ -37,6 +37,9 @@ public class NotificationPreferenceJpaEntity {
     @Column(name = "notify_dm_received", columnDefinition = "boolean default true")
     private boolean notifyDmReceived = true;
 
+    @Column(name = "notify_party_chat_received", columnDefinition = "boolean default true")
+    private boolean notifyPartyChatReceived = true;
+
     public static NotificationPreferenceJpaEntity fromDomain(NotificationPreference pref) {
         NotificationPreferenceJpaEntity entity = new NotificationPreferenceJpaEntity();
         entity.id = pref.getId();
@@ -45,6 +48,7 @@ public class NotificationPreferenceJpaEntity {
         entity.notifyApplicationAccepted = pref.isNotifyApplicationAccepted();
         entity.notifyApplicationRejected = pref.isNotifyApplicationRejected();
         entity.notifyDmReceived = pref.isNotifyDmReceived();
+        entity.notifyPartyChatReceived = pref.isNotifyPartyChatReceived();
         return entity;
     }
 
@@ -55,7 +59,8 @@ public class NotificationPreferenceJpaEntity {
                 notifyApplicationReceived,
                 notifyApplicationAccepted,
                 notifyApplicationRejected,
-                notifyDmReceived
+                notifyDmReceived,
+                notifyPartyChatReceived
         );
     }
 }

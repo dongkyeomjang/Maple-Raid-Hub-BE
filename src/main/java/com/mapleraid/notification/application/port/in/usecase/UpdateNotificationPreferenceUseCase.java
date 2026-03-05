@@ -8,5 +8,6 @@ public interface UpdateNotificationPreferenceUseCase {
     NotificationPreference execute(UserId userId, Boolean notifyApplicationReceived,
                                    Boolean notifyApplicationAccepted,
                                    Boolean notifyApplicationRejected,
-                                   Boolean notifyDmReceived);
+                                   Boolean notifyDmReceived,
+                                   Boolean notifyPartyChatReceived);
 }

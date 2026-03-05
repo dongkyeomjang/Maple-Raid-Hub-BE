@@ -9,21 +9,12 @@ public class Constants {
     public static final int DAILY_CHALLENGE_LIMIT = 5;
 
     // JWT
-    public static String ACCOUNT_ID_ATTRIBUTE_NAME = "ACCOUNT_ID";
     public static String ACCOUNT_ID_CLAIM_NAME = "aid";
     public static String ACCOUNT_ROLE_CLAIM_NAME = "rol";
 
     // HEADER
     public static String BEARER_PREFIX = "Bearer ";
     public static String AUTHORIZATION_HEADER = "Authorization";
-
-    // TOKEN
-    public static String ACCESS_TOKEN = "access_token";
-    public static String REFRESH_TOKEN = "refresh_token";
-    public static String TEMPORARY_TOKEN = "temporary_token";
-
-    // Oauth2 Href URL
-    public static String KAKAO_OAUTH2_HREF = "/oauth2/authorization/kakao";
 
     // Additional Info Input Url
     public static String ADDITIONAL_INFO_INPUT_PATH = "oauth/set-nickname";
@@ -59,12 +50,5 @@ public class Constants {
             "/api/posts",
             "/api/posts/*",
             "/api/posts/*/applications"
-    );
-
-    /**
-     * 사용자 URL
-     */
-    public static List<String> USER_URLS = List.of(
-            "/api/**"
     );
 }

@@ -12,6 +12,7 @@ public class NotificationPreference {
     private boolean notifyApplicationAccepted;
     private boolean notifyApplicationRejected;
     private boolean notifyDmReceived;
+    private boolean notifyPartyChatReceived;
 
     private NotificationPreference(UserId userId) {
         this.userId = userId;
@@ -19,6 +20,7 @@ public class NotificationPreference {
         this.notifyApplicationAccepted = true;
         this.notifyApplicationRejected = true;
         this.notifyDmReceived = true;
+        this.notifyPartyChatReceived = true;
     }
 
     public static NotificationPreference createDefault(UserId userId) {
@@ -30,21 +32,25 @@ public class NotificationPreference {
             boolean notifyApplicationReceived,
             boolean notifyApplicationAccepted,
             boolean notifyApplicationRejected,
-            boolean notifyDmReceived) {
+            boolean notifyDmReceived,
+            boolean notifyPartyChatReceived) {
         NotificationPreference pref = new NotificationPreference(userId);
         pref.id = id;
         pref.notifyApplicationReceived = notifyApplicationReceived;
         pref.notifyApplicationAccepted = notifyApplicationAccepted;
         pref.notifyApplicationRejected = notifyApplicationRejected;
         pref.notifyDmReceived = notifyDmReceived;
+        pref.notifyPartyChatReceived = notifyPartyChatReceived;
         return pref;
     }
 
     public void update(Boolean notifyApplicationReceived, Boolean notifyApplicationAccepted,
-                       Boolean notifyApplicationRejected, Boolean notifyDmReceived) {
+                       Boolean notifyApplicationRejected, Boolean notifyDmReceived,
+                       Boolean notifyPartyChatReceived) {
         if (notifyApplicationReceived != null) this.notifyApplicationReceived = notifyApplicationReceived;
         if (notifyApplicationAccepted != null) this.notifyApplicationAccepted = notifyApplicationAccepted;
         if (notifyApplicationRejected != null) this.notifyApplicationRejected = notifyApplicationRejected;
         if (notifyDmReceived != null) this.notifyDmReceived = notifyDmReceived;
+        if (notifyPartyChatReceived != null) this.notifyPartyChatReceived = notifyPartyChatReceived;
     }
 }

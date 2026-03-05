@@ -40,7 +40,8 @@ public class NotificationPreferenceController {
                                 request.notifyApplicationReceived(),
                                 request.notifyApplicationAccepted(),
                                 request.notifyApplicationRejected(),
-                                request.notifyDmReceived()
+                                request.notifyDmReceived(),
+                                request.notifyPartyChatReceived()
                         )
                 )
         );

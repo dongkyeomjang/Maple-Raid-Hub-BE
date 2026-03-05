@@ -6,14 +6,16 @@ public record NotificationPreferenceResponse(
         boolean notifyApplicationReceived,
         boolean notifyApplicationAccepted,
         boolean notifyApplicationRejected,
-        boolean notifyDmReceived
+        boolean notifyDmReceived,
+        boolean notifyPartyChatReceived
 ) {
     public static NotificationPreferenceResponse from(NotificationPreference pref) {
         return new NotificationPreferenceResponse(
                 pref.isNotifyApplicationReceived(),
                 pref.isNotifyApplicationAccepted(),
                 pref.isNotifyApplicationRejected(),
-                pref.isNotifyDmReceived()
+                pref.isNotifyDmReceived(),
+                pref.isNotifyPartyChatReceived()
         );
     }
 }

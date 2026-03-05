@@ -4,6 +4,7 @@ import com.mapleraid.core.exception.definition.ErrorCode;
 import com.mapleraid.core.exception.type.CommonException;
 import com.mapleraid.party.application.port.in.input.command.MarkPartyChatAsReadInput;
 import com.mapleraid.party.application.port.in.usecase.MarkPartyChatAsReadUseCase;
+import com.mapleraid.notification.application.service.DelayedNotificationScheduler;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyRoom;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MarkPartyChatAsReadService implements MarkPartyChatAsReadUseCase {
     private final PartyRoomRepository partyRoomRepository;
+    private final DelayedNotificationScheduler delayedNotificationScheduler;
 
     @Override
     @Transactional
@@ -24,5 +26,7 @@ public class MarkPartyChatAsReadService implements MarkPartyChatAsReadUseCase {
             throw new CommonException(ErrorCode.PARTY_NOT_MEMBER);
         }
         partyRoomRepository.clearMemberUnreadCount(input.getPartyRoomId(), input.getUserId());
+        delayedNotificationScheduler.cancelPendingPartyNotification(
+                input.getUserId(), input.getPartyRoomId().getValue().toString());
     }
 }

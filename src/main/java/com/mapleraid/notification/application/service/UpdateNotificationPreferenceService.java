@@ -19,12 +19,13 @@ public class UpdateNotificationPreferenceService implements UpdateNotificationPr
     public NotificationPreference execute(UserId userId, Boolean notifyApplicationReceived,
                                           Boolean notifyApplicationAccepted,
                                           Boolean notifyApplicationRejected,
-                                          Boolean notifyDmReceived) {
+                                          Boolean notifyDmReceived,
+                                          Boolean notifyPartyChatReceived) {
         NotificationPreference pref = repository.findByUserId(userId)
                 .orElseGet(() -> repository.save(NotificationPreference.createDefault(userId)));
 
         pref.update(notifyApplicationReceived, notifyApplicationAccepted,
-                notifyApplicationRejected, notifyDmReceived);
+                notifyApplicationRejected, notifyDmReceived, notifyPartyChatReceived);
 
         return repository.save(pref);
     }

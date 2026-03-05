@@ -16,7 +16,7 @@ public class WorldGroupResolver {
     );
 
     private static final Set<String> EOS_HELIOS_WORLDS = Set.of(
-            "에오스", "헬리오스"
+            "에오스", "핼리오스"
     );
 
     private static final Set<String> NORMAL_WORLDS = Set.of(
