@@ -80,6 +80,16 @@ public class Application {
     }
 
     /**
+     * 파티 탈퇴/추방으로 인한 취소 (ACCEPTED → WITHDRAWN)
+     */
+    public void withdrawByLeave() {
+        if (status == ApplicationStatus.ACCEPTED) {
+            this.status = ApplicationStatus.WITHDRAWN;
+            this.respondedAt = Instant.now();
+        }
+    }
+
+    /**
      * 모집글 취소로 인한 자동 취소
      */
     public void cancelByPost() {

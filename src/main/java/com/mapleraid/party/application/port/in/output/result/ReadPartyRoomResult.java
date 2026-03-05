@@ -20,12 +20,14 @@ public class ReadPartyRoomResult extends SelfValidating<ReadPartyRoomResult> {
     private final Instant createdAt;
     private final Instant completedAt;
     private final List<MemberInfo> members;
+    private final List<LeftMemberInfo> leftMembers;
     private final String lastMessage;
     private final Instant lastMessageAt;
 
     public ReadPartyRoomResult(String id, String postId, List<String> bossIds, String status,
                                Instant scheduledTime, boolean scheduleConfirmed, Instant readyCheckStartedAt, boolean allReady,
                                Instant createdAt, Instant completedAt, List<MemberInfo> members,
+                               List<LeftMemberInfo> leftMembers,
                                String lastMessage, Instant lastMessageAt) {
         this.id = id;
         this.postId = postId;
@@ -38,6 +40,7 @@ public class ReadPartyRoomResult extends SelfValidating<ReadPartyRoomResult> {
         this.createdAt = createdAt;
         this.completedAt = completedAt;
         this.members = members;
+        this.leftMembers = leftMembers;
         this.lastMessage = lastMessage;
         this.lastMessageAt = lastMessageAt;
         this.validateSelf();
@@ -68,6 +71,27 @@ public class ReadPartyRoomResult extends SelfValidating<ReadPartyRoomResult> {
             this.isReady = isReady;
             this.joinedAt = joinedAt;
             this.unreadCount = unreadCount;
+        }
+    }
+
+    @Getter
+    public static class LeftMemberInfo {
+
+        private final String userId;
+        private final String characterId;
+        private final String characterName;
+        private final String characterImageUrl;
+        private final Instant joinedAt;
+        private final Instant leftAt;
+
+        public LeftMemberInfo(String userId, String characterId, String characterName,
+                              String characterImageUrl, Instant joinedAt, Instant leftAt) {
+            this.userId = userId;
+            this.characterId = characterId;
+            this.characterName = characterName;
+            this.characterImageUrl = characterImageUrl;
+            this.joinedAt = joinedAt;
+            this.leftAt = leftAt;
         }
     }
 }

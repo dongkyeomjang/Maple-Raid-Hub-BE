@@ -16,6 +16,7 @@ public record PartyRoomResponseDto(
         List<String> bossIds,
         String status,
         List<MemberResponseDto> members,
+        List<LeftMemberResponseDto> leftMembers,
         boolean readyCheckActive,
         boolean allReady,
         Instant scheduledTime,
@@ -32,9 +33,17 @@ public record PartyRoomResponseDto(
                         m.getCharacterImageUrl(), m.getWorldName(), m.isLeader(), m.isReady(),
                         m.getJoinedAt(), m.getUnreadCount()))
                 .toList();
+        List<LeftMemberResponseDto> leftMembers = result.getLeftMembers() != null
+                ? result.getLeftMembers().stream()
+                        .map(m -> new LeftMemberResponseDto(
+                                m.getUserId(), m.getCharacterId(), m.getCharacterName(),
+                                m.getCharacterImageUrl(), m.getJoinedAt(), m.getLeftAt()))
+                        .toList()
+                : List.of();
         return new PartyRoomResponseDto(
                 result.getId(), result.getPostId(), result.getBossIds(), result.getStatus(),
                 members,
+                leftMembers,
                 result.getReadyCheckStartedAt() != null,
                 result.isAllReady(),
                 result.getScheduledTime(),
@@ -55,6 +64,7 @@ public record PartyRoomResponseDto(
         return new PartyRoomResponseDto(
                 summary.getId(), summary.getPostId(), summary.getBossIds(), summary.getStatus(),
                 members,
+                null,
                 summary.getReadyCheckStartedAt() != null,
                 summary.isAllReady(),
                 summary.getScheduledTime(),
@@ -68,6 +78,7 @@ public record PartyRoomResponseDto(
     public static PartyRoomResponseDto from(CompletePartyRoomResult result) {
         return new PartyRoomResponseDto(
                 result.getId(), result.getPostId(), result.getBossIds(), result.getStatus(),
+                null,
                 null,
                 false,
                 false,
@@ -83,6 +94,7 @@ public record PartyRoomResponseDto(
         return new PartyRoomResponseDto(
                 result.getId(), null, null, null,
                 null,
+                null,
                 result.getReadyCheckStartedAt() != null,
                 result.isAllReady(),
                 null,
@@ -97,6 +109,7 @@ public record PartyRoomResponseDto(
         return new PartyRoomResponseDto(
                 result.getId(), null, null, null,
                 null,
+                null,
                 false,
                 result.isAllReady(),
                 null,
@@ -110,6 +123,7 @@ public record PartyRoomResponseDto(
     public static PartyRoomResponseDto from(ConfirmScheduleResult result) {
         return new PartyRoomResponseDto(
                 result.getId(), null, null, null,
+                null,
                 null,
                 false,
                 false,
@@ -131,6 +145,16 @@ public record PartyRoomResponseDto(
             boolean isReady,
             Instant joinedAt,
             int unreadCount
+    ) {
+    }
+
+    public record LeftMemberResponseDto(
+            String userId,
+            String characterId,
+            String characterName,
+            String characterImageUrl,
+            Instant joinedAt,
+            Instant leftAt
     ) {
     }
 }

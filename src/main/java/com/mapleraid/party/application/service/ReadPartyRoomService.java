@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,11 +39,12 @@ public class ReadPartyRoomService implements ReadPartyRoomUseCase {
             throw new CommonException(ErrorCode.PARTY_NOT_MEMBER);
         }
 
-        Set<CharacterId> characterIds = partyRoom.getActiveMembers().stream()
+        // 활성 + 탈퇴 멤버의 캐릭터를 모두 일괄 조회
+        Set<CharacterId> allCharacterIds = partyRoom.getMembers().stream()
                 .map(PartyMember::getCharacterId)
                 .collect(Collectors.toSet());
 
-        Map<CharacterId, Character> characterMap = characterRepository.findByIds(characterIds).stream()
+        Map<CharacterId, Character> characterMap = characterRepository.findByIds(allCharacterIds).stream()
                 .collect(Collectors.toMap(Character::getId, c -> c));
 
         List<ReadPartyRoomResult.MemberInfo> memberInfos = partyRoom.getActiveMembers().stream()
@@ -61,6 +63,27 @@ public class ReadPartyRoomService implements ReadPartyRoomUseCase {
                 })
                 .toList();
 
+        // 탈퇴한 멤버 목록 (요청자의 합류 시점 이전에 탈퇴한 멤버는 제외)
+        PartyMember requester = partyRoom.getActiveMembers().stream()
+                .filter(m -> m.getUserId().equals(input.getRequesterId()))
+                .findFirst()
+                .orElse(null);
+        Instant requesterJoinedAt = requester != null ? requester.getJoinedAt() : null;
+
+        List<ReadPartyRoomResult.LeftMemberInfo> leftMemberInfos = partyRoom.getLeftMembers().stream()
+                .filter(m -> requesterJoinedAt == null || !m.getLeftAt().isBefore(requesterJoinedAt))
+                .map(m -> {
+                    Character character = characterMap.get(m.getCharacterId());
+                    return new ReadPartyRoomResult.LeftMemberInfo(
+                            m.getUserId().getValue().toString(),
+                            m.getCharacterId().getValue().toString(),
+                            character != null ? character.getCharacterName() : null,
+                            character != null ? character.getCharacterImageUrl() : null,
+                            m.getJoinedAt(),
+                            m.getLeftAt());
+                })
+                .toList();
+
         PartyChatMessageRepository.LastMessageInfo lastMessageInfo =
                 partyChatMessageRepository.getLastMessageInfo(partyRoom.getId().getValue().toString());
 
@@ -76,6 +99,7 @@ public class ReadPartyRoomService implements ReadPartyRoomUseCase {
                 partyRoom.getCreatedAt(),
                 partyRoom.getCompletedAt(),
                 memberInfos,
+                leftMemberInfos,
                 lastMessageInfo != null ? lastMessageInfo.content() : null,
                 lastMessageInfo != null ? lastMessageInfo.timestamp() : null
         );

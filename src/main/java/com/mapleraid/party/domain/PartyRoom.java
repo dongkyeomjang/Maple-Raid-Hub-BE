@@ -95,6 +95,33 @@ public class PartyRoom {
         }
 
         member.leave();
+
+        // 일정이 확정되어 있었다면 해제
+        if (scheduleConfirmed) {
+            this.scheduledTime = null;
+            this.scheduleConfirmed = false;
+        }
+    }
+
+    /**
+     * 파티장이 특정 멤버를 추방
+     */
+    public void kickMember(UserId requesterId, UserId targetUserId) {
+        validateActive();
+        validateLeader(requesterId);
+
+        if (requesterId.equals(targetUserId)) {
+            throw new CommonException(ErrorCode.PARTY_LEADER_CANNOT_LEAVE);
+        }
+
+        PartyMember target = findActiveMember(targetUserId);
+        target.leave();
+
+        // 일정이 확정되어 있었다면 해제
+        if (scheduleConfirmed) {
+            this.scheduledTime = null;
+            this.scheduleConfirmed = false;
+        }
     }
 
     /**
@@ -199,6 +226,12 @@ public class PartyRoom {
     public List<PartyMember> getActiveMembers() {
         return members.stream()
                 .filter(PartyMember::isActive)
+                .toList();
+    }
+
+    public List<PartyMember> getLeftMembers() {
+        return members.stream()
+                .filter(PartyMember::hasLeft)
                 .toList();
     }
 

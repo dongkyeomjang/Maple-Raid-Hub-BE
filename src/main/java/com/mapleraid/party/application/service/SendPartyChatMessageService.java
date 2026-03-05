@@ -9,6 +9,7 @@ import com.mapleraid.party.application.port.out.PartyChatMessageRepository;
 import com.mapleraid.party.application.port.out.PartyRoomRepository;
 import com.mapleraid.party.domain.PartyMember;
 import com.mapleraid.party.domain.PartyRoom;
+import com.mapleraid.party.domain.PartyRoomStatus;
 import com.mapleraid.notification.application.event.PartyChatMessageReceivedEvent;
 import com.mapleraid.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,10 @@ public class SendPartyChatMessageService implements SendPartyChatMessageUseCase 
 
         if (!partyRoom.isMember(input.getSenderId())) {
             throw new CommonException(ErrorCode.PARTY_NOT_MEMBER);
+        }
+
+        if (partyRoom.getStatus() != PartyRoomStatus.ACTIVE) {
+            throw new CommonException(ErrorCode.PARTY_NOT_ACTIVE);
         }
 
         chatMessageRepository.savePartyChatMessage(

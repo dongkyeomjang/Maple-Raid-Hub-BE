@@ -8,6 +8,7 @@ import com.mapleraid.party.adapter.in.web.dto.response.AvailabilityResponseDto;
 import com.mapleraid.party.adapter.in.web.dto.response.PartyRoomResponseDto;
 import com.mapleraid.party.application.port.in.input.command.CompletePartyRoomInput;
 import com.mapleraid.party.application.port.in.input.command.ConfirmScheduleInput;
+import com.mapleraid.party.application.port.in.input.command.KickMemberInput;
 import com.mapleraid.party.application.port.in.input.command.LeavePartyRoomInput;
 import com.mapleraid.party.application.port.in.input.command.MarkPartyChatAsReadInput;
 import com.mapleraid.party.application.port.in.input.command.MarkReadyInput;
@@ -16,6 +17,7 @@ import com.mapleraid.party.application.port.in.input.command.StartReadyCheckInpu
 import com.mapleraid.party.application.port.in.output.result.SaveAvailabilityResult;
 import com.mapleraid.party.application.port.in.usecase.CompletePartyRoomUseCase;
 import com.mapleraid.party.application.port.in.usecase.ConfirmScheduleUseCase;
+import com.mapleraid.party.application.port.in.usecase.KickMemberUseCase;
 import com.mapleraid.party.application.port.in.usecase.LeavePartyRoomUseCase;
 import com.mapleraid.party.application.port.in.usecase.MarkPartyChatAsReadUseCase;
 import com.mapleraid.party.application.port.in.usecase.MarkReadyUseCase;
@@ -25,6 +27,7 @@ import com.mapleraid.party.domain.Availability;
 import com.mapleraid.party.domain.PartyRoomId;
 import com.mapleraid.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,6 +43,7 @@ import java.util.List;
 public class PartyCommandController {
 
     private final LeavePartyRoomUseCase leavePartyRoomUseCase;
+    private final KickMemberUseCase kickMemberUseCase;
     private final CompletePartyRoomUseCase completePartyRoomUseCase;
     private final StartReadyCheckUseCase startReadyCheckUseCase;
     private final MarkReadyUseCase markReadyUseCase;
@@ -59,6 +63,25 @@ public class PartyCommandController {
                 LeavePartyRoomInput.of(
                         PartyRoomId.of(partyRoomId),
                         userId
+                )
+        );
+        return ResponseDto.ok(null);
+    }
+
+    /**
+     * 파티원 추방 (파티장 전용)
+     */
+    @DeleteMapping("/{partyRoomId}/members/{targetUserId}")
+    public ResponseDto<Void> kickMember(
+            @CurrentUser UserId userId,
+            @PathVariable String partyRoomId,
+            @PathVariable String targetUserId) {
+
+        kickMemberUseCase.execute(
+                KickMemberInput.of(
+                        PartyRoomId.of(partyRoomId),
+                        userId,
+                        UserId.of(targetUserId)
                 )
         );
         return ResponseDto.ok(null);

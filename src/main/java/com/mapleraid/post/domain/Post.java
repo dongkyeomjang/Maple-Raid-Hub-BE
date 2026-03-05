@@ -178,6 +178,20 @@ public class Post {
     }
 
     /**
+     * 파티원 탈퇴/추방 처리: 현재 인원 감소 + 해당 지원 상태 변경
+     */
+    public void memberLeft(UserId userId) {
+        if (currentMembers > 1) {
+            currentMembers--;
+        }
+        applications.stream()
+                .filter(app -> app.getApplicantId().equals(userId) && app.isAccepted())
+                .findFirst()
+                .ifPresent(Application::withdrawByLeave);
+        updatedAt = Instant.now();
+    }
+
+    /**
      * 모집 마감 (현재 인원으로 파티 결성)
      */
     public void close() {
