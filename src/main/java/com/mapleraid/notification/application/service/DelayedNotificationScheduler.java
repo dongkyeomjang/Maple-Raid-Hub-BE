@@ -193,7 +193,7 @@ public class DelayedNotificationScheduler {
         }
 
         String message = String.format(
-                "[파티 채팅 알림] %s님의 새 메시지: \"%s\"\n→ https://www.mapleraid.com/party",
+                "[파티 채팅 알림] %s님의 새 메시지: \"%s\"\n→ https://www.mapleraid.com/chat",
                 senderNickname, messagePreview);
 
         NotificationResult result = discordNotificationPort.sendNotification(user.getDiscordId(), message);
@@ -249,7 +249,7 @@ public class DelayedNotificationScheduler {
         }
 
         String message = String.format(
-                "[DM 알림] %s님의 새 메시지: \"%s\"\n→ https://www.mapleraid.com/me",
+                "[DM 알림] %s님의 새 메시지: \"%s\"\n→ https://www.mapleraid.com/chat",
                 senderNickname, messagePreview);
 
         NotificationResult result = discordNotificationPort.sendNotification(user.getDiscordId(), message);
