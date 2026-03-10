@@ -103,16 +103,21 @@ public class JsonWebTokenAuthenticationFilter extends OncePerRequestFilter {
                 return false;
             }
 
-            // 새 access token 발급
+            // 새 access token + refresh token 발급 (Refresh Token Rotation)
             String newAccessToken = jsonWebTokenUtil.generateAccessToken(accountId, ESecurityRole.USER);
+            String newRefreshToken = jsonWebTokenUtil.generateRefreshToken(accountId);
 
             // 쿠키에 새 access token 설정
             CookieUtil.addSecureCookie(response, cookieDomain, accessTokenCookieName, newAccessToken,
                     (int) (cookieMaxAge / 1000));
 
+            // 쿠키에 새 refresh token 설정
+            CookieUtil.addSecureCookie(response, cookieDomain, refreshTokenCookieName, newRefreshToken,
+                    (int) (cookieMaxAge / 1000));
+
             // 인증 설정
             setAuthentication(request, jsonWebTokenUtil.validateToken(newAccessToken));
-            log.debug("Access token auto-refreshed for user: {}", accountId);
+            log.debug("Tokens auto-refreshed (rotation) for user: {}", accountId);
             return true;
 
         } catch (Exception e) {

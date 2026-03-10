@@ -78,6 +78,13 @@ public class JsonWebTokenUtil implements InitializingBean {
         return generateToken(id.toString(), role, accessTokenExpirePeriod);
     }
 
+    /**
+     * Refresh token 생성 (Refresh Token Rotation용)
+     */
+    public String generateRefreshToken(UUID id) {
+        return generateToken(id.toString(), null, refreshTokenExpirePeriod);
+    }
+
     public Claims validateToken(String token) {
         try {
             return Jwts.parser()
