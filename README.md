@@ -209,7 +209,7 @@ domain-module/
 
 ## 인증 & 보안
 
-- **JWT 인증**: Access Token(1시간) + Refresh Token(7일), HttpOnly 쿠키 저장
+- **JWT 인증**: Access Token(1시간) + Refresh Token(30일), HttpOnly 쿠키 저장
 - **OAuth2**: 카카오 로그인 지원
 - **세션**: Stateless (서버 세션 없음)
 - **CORS**: 환경별 허용 도메인 설정
