@@ -59,6 +59,9 @@ public enum ErrorCode {
     PARTY_NOT_ACTIVE(40040, HttpStatus.BAD_REQUEST, "활성 상태의 파티룸이 아닙니다."),
     PARTY_NOT_COMPLETED(40041, HttpStatus.BAD_REQUEST, "완료된 파티가 아닙니다."),
     DISCORD_NOT_LINKED(40044, HttpStatus.BAD_REQUEST, "Discord 계정이 연동되어 있지 않습니다."),
+    RECOVERY_NO_VERIFIED_CHARACTER(40046, HttpStatus.BAD_REQUEST, "해당 캐릭터명/월드로 인증된 캐릭터를 찾을 수 없습니다."),
+    RECOVERY_OAUTH_USER(40047, HttpStatus.BAD_REQUEST, "소셜 로그인 계정은 아이디/비밀번호 찾기를 사용할 수 없습니다."),
+    RECOVERY_INVALID_TOKEN(40048, HttpStatus.BAD_REQUEST, "유효하지 않은 복구 토큰입니다."),
 
     // Access Denied Error
     ACCESS_DENIED(40300, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),

@@ -85,6 +85,21 @@ public class JsonWebTokenUtil implements InitializingBean {
         return generateToken(id.toString(), null, refreshTokenExpirePeriod);
     }
 
+    /**
+     * 계정 복구용 토큰 생성 (30분 유효)
+     */
+    public String generateRecoveryToken(UUID userId) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + temporaryTokenExpirePeriod);
+
+        return Jwts.builder()
+                .claim(Constants.ACCOUNT_ID_CLAIM_NAME, userId.toString() + ":recovery")
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(key)
+                .compact();
+    }
+
     public Claims validateToken(String token) {
         try {
             return Jwts.parser()

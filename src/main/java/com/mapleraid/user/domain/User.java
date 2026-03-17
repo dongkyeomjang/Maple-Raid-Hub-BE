@@ -15,7 +15,7 @@ public class User {
 
     private final UserId id;
     private final String username;
-    private final String passwordHash;
+    private String passwordHash;
     private String nickname;
 
     // OAuth
@@ -212,6 +212,14 @@ public class User {
             this.suspendedUntil = null;
         }
         return status == UserStatus.ACTIVE;
+    }
+
+    /**
+     * 비밀번호 변경
+     */
+    public void changePassword(String newPasswordHash) {
+        this.passwordHash = newPasswordHash;
+        this.updatedAt = Instant.now();
     }
 
     /**

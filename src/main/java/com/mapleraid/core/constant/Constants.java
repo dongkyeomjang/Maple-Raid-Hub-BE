@@ -32,6 +32,9 @@ public class Constants {
             "/api/auth/login",
             "/api/auth/oauth/complete",
 
+            // Account Recovery
+            "/api/auth/recovery/**",
+
             // Public APIs
             "/api/config/**",
             "/api/stats",
