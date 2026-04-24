@@ -39,6 +39,10 @@ public class ReadPostDetailService implements ReadPostDetailUseCase {
         Post post = postRepository.findByIdWithApplications(input.getPostId())
                 .orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));
 
+        if (post.isGuest()) {
+            return toGuestResult(post);
+        }
+
         // 모든 캐릭터 ID 수집 (작성자 + 지원자)
         Set<CharacterId> characterIds = new HashSet<>();
         characterIds.add(post.getCharacterId());
@@ -46,24 +50,20 @@ public class ReadPostDetailService implements ReadPostDetailUseCase {
             characterIds.add(app.getCharacterId());
         }
 
-        // 배치 조회
         Map<CharacterId, Character> characterMap = characterRepository.findByIds(characterIds).stream()
                 .collect(Collectors.toMap(Character::getId, c -> c));
 
-        // 소유자 ID 수집 및 배치 조회
         List<UserId> ownerIdList = characterMap.values().stream()
                 .map(Character::getOwnerId)
                 .distinct()
                 .toList();
         Map<UserId, User> userMap = userRepository.findAllByIds(ownerIdList);
 
-        // 작성자 캐릭터
         Character authorChar = characterMap.get(post.getCharacterId());
         double authorTemperature = authorChar != null && userMap.containsKey(authorChar.getOwnerId())
                 ? userMap.get(authorChar.getOwnerId()).getTemperature() : 0.0;
         CharacterSummary authorCharacter = toCharacterSummary(authorChar, authorTemperature);
 
-        // 지원 목록 (캐릭터 정보 포함)
         List<ReadPostDetailResult.ApplicationSummary> appSummaries = post.getApplications().stream()
                 .map(app -> {
                     Character appChar = characterMap.get(app.getCharacterId());
@@ -87,6 +87,7 @@ public class ReadPostDetailService implements ReadPostDetailUseCase {
                 post.getAuthorId().getValue().toString(),
                 post.getCharacterId().getValue().toString(),
                 post.getWorldGroup().name(),
+                false, null, null, null, null,
                 post.getBossIds(),
                 post.getRequiredMembers(),
                 post.getCurrentMembers(),
@@ -100,6 +101,48 @@ public class ReadPostDetailService implements ReadPostDetailUseCase {
                 post.getClosedAt(),
                 appSummaries,
                 authorCharacter);
+    }
+
+    private ReadPostDetailResult toGuestResult(Post post) {
+        // 비회원 글: 저장된 guest 값으로 기본 캐릭터 카드 구성. 전투력/장비는 별도 엔드포인트에서 매번 조회
+        CharacterSummary guestCharacter = new CharacterSummary(
+                null,
+                post.getGuestCharacterName(),
+                post.getGuestWorldName(),
+                post.getWorldGroup().name(),
+                null,
+                0,
+                post.getGuestCharacterImageUrl(),
+                0L,
+                null,
+                null,
+                null,
+                0.0
+        );
+
+        return new ReadPostDetailResult(
+                post.getId().getValue().toString(),
+                null,
+                null,
+                post.getWorldGroup().name(),
+                true,
+                post.getGuestWorldName(),
+                post.getGuestCharacterName(),
+                post.getGuestCharacterImageUrl(),
+                post.getContactLink(),
+                post.getBossIds(),
+                post.getRequiredMembers(),
+                post.getCurrentMembers(),
+                post.getPreferredTime(),
+                post.getDescription(),
+                post.getStatus().name(),
+                null,
+                post.getCreatedAt(),
+                post.getUpdatedAt(),
+                post.getExpiresAt(),
+                post.getClosedAt(),
+                List.of(),
+                guestCharacter);
     }
 
     private CharacterSummary toCharacterSummary(Character c, double temperature) {

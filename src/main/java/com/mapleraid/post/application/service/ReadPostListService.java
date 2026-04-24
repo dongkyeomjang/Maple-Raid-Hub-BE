@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,23 +57,47 @@ public class ReadPostListService implements ReadPostListUseCase {
             total = postRepository.countByStatus(input.getStatus());
         }
 
-        // Collect IDs for batch fetch
+        // 비회원 글은 authorId/characterId가 null이므로 필터링
         Set<CharacterId> charIds = posts.stream()
                 .map(Post::getCharacterId)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         List<UserId> userIds = posts.stream()
                 .map(Post::getAuthorId)
+                .filter(Objects::nonNull)
                 .distinct()
                 .toList();
 
-        // Batch fetch users and characters
         Map<UserId, User> userMap = userRepository.findAllByIds(userIds);
         Map<CharacterId, Character> charMap = characterRepository.findByIds(charIds).stream()
                 .collect(Collectors.toMap(Character::getId, c -> c));
 
-        // Build summaries with enriched data
         List<ReadPostListResult.PostSummary> summaries = posts.stream()
                 .map(post -> {
+                    if (post.isGuest()) {
+                        return new ReadPostListResult.PostSummary(
+                                post.getId().getValue().toString(),
+                                null,
+                                null,
+                                null,
+                                post.getGuestCharacterName(),
+                                post.getGuestCharacterImageUrl(),
+                                post.getWorldGroup().name(),
+                                post.getGuestWorldName(),
+                                true,
+                                post.getContactLink(),
+                                post.getBossIds(),
+                                post.getRequiredMembers(),
+                                post.getCurrentMembers(),
+                                post.getPreferredTime(),
+                                post.getDescription(),
+                                post.getStatus().name(),
+                                null,
+                                post.getCreatedAt(),
+                                post.getUpdatedAt(),
+                                post.getExpiresAt()
+                        );
+                    }
                     User author = userMap.get(post.getAuthorId());
                     Character character = charMap.get(post.getCharacterId());
                     return new ReadPostListResult.PostSummary(
@@ -84,6 +109,8 @@ public class ReadPostListService implements ReadPostListUseCase {
                             character != null ? character.getCharacterImageUrl() : null,
                             post.getWorldGroup().name(),
                             character != null ? character.getWorldName() : null,
+                            false,
+                            null,
                             post.getBossIds(),
                             post.getRequiredMembers(),
                             post.getCurrentMembers(),

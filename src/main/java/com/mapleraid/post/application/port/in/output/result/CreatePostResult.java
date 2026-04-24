@@ -17,6 +17,9 @@ public class CreatePostResult extends SelfValidating<CreatePostResult> {
     private final String characterName;
     private final String characterImageUrl;
     private final String worldGroup;
+    private final String worldName;
+    private final boolean guest;
+    private final String contactLink;
     private final List<String> bossIds;
     private final int requiredMembers;
     private final int currentMembers;
@@ -30,7 +33,8 @@ public class CreatePostResult extends SelfValidating<CreatePostResult> {
 
     public CreatePostResult(String id, String authorId, String authorNickname,
                             String characterId, String characterName, String characterImageUrl,
-                            String worldGroup,
+                            String worldGroup, String worldName,
+                            boolean guest, String contactLink,
                             List<String> bossIds, int requiredMembers, int currentMembers,
                             String preferredTime, String description,
                             String status, String partyRoomId,
@@ -42,6 +46,9 @@ public class CreatePostResult extends SelfValidating<CreatePostResult> {
         this.characterName = characterName;
         this.characterImageUrl = characterImageUrl;
         this.worldGroup = worldGroup;
+        this.worldName = worldName;
+        this.guest = guest;
+        this.contactLink = contactLink;
         this.bossIds = bossIds;
         this.requiredMembers = requiredMembers;
         this.currentMembers = currentMembers;
@@ -55,15 +62,18 @@ public class CreatePostResult extends SelfValidating<CreatePostResult> {
         this.validateSelf();
     }
 
-    public static CreatePostResult from(Post post, String authorNickname, String characterName, String characterImageUrl) {
+    public static CreatePostResult from(Post post, String authorNickname, String characterName, String characterImageUrl, String worldName) {
         return new CreatePostResult(
                 post.getId().getValue().toString(),
-                post.getAuthorId().getValue().toString(),
+                post.getAuthorId() != null ? post.getAuthorId().getValue().toString() : null,
                 authorNickname,
-                post.getCharacterId().getValue().toString(),
-                characterName,
-                characterImageUrl,
+                post.getCharacterId() != null ? post.getCharacterId().getValue().toString() : null,
+                post.isGuest() ? post.getGuestCharacterName() : characterName,
+                post.isGuest() ? post.getGuestCharacterImageUrl() : characterImageUrl,
                 post.getWorldGroup().name(),
+                post.isGuest() ? post.getGuestWorldName() : worldName,
+                post.isGuest(),
+                post.getContactLink(),
                 post.getBossIds(),
                 post.getRequiredMembers(),
                 post.getCurrentMembers(),

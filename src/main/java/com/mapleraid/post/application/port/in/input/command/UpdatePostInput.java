@@ -16,8 +16,11 @@ public class UpdatePostInput extends SelfValidating<UpdatePostInput> {
     @NotNull(message = "게시글 아이디는 필수입니다.")
     private final PostId postId;
 
-    @NotNull(message = "요청자 아이디는 필수입니다.")
+    // 회원 요청 시 주입, 비회원이면 null
     private final UserId requesterId;
+
+    // 비회원 요청 시 주입
+    private final String guestPassword;
 
     private final List<String> bossIds;
 
@@ -33,11 +36,12 @@ public class UpdatePostInput extends SelfValidating<UpdatePostInput> {
 
     private final boolean clearDescription;
 
-    private UpdatePostInput(PostId postId, UserId requesterId, List<String> bossIds,
+    private UpdatePostInput(PostId postId, UserId requesterId, String guestPassword, List<String> bossIds,
                             Integer requiredMembers, String preferredTime, boolean clearPreferredTime,
                             String description, boolean clearDescription) {
         this.postId = postId;
         this.requesterId = requesterId;
+        this.guestPassword = guestPassword;
         this.bossIds = bossIds;
         this.requiredMembers = requiredMembers;
         this.preferredTime = preferredTime;
@@ -50,7 +54,14 @@ public class UpdatePostInput extends SelfValidating<UpdatePostInput> {
     public static UpdatePostInput of(PostId postId, UserId requesterId, List<String> bossIds,
                                      Integer requiredMembers, String preferredTime, boolean clearPreferredTime,
                                      String description, boolean clearDescription) {
-        return new UpdatePostInput(postId, requesterId, bossIds, requiredMembers,
+        return new UpdatePostInput(postId, requesterId, null, bossIds, requiredMembers,
+                preferredTime, clearPreferredTime, description, clearDescription);
+    }
+
+    public static UpdatePostInput ofGuest(PostId postId, String guestPassword, List<String> bossIds,
+                                          Integer requiredMembers, String preferredTime, boolean clearPreferredTime,
+                                          String description, boolean clearDescription) {
+        return new UpdatePostInput(postId, null, guestPassword, bossIds, requiredMembers,
                 preferredTime, clearPreferredTime, description, clearDescription);
     }
 }

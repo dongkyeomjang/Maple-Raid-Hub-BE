@@ -33,6 +33,8 @@ public class ReadPostListResult extends SelfValidating<ReadPostListResult> {
         private final String characterImageUrl;
         private final String worldGroup;
         private final String worldName;
+        private final boolean guest;
+        private final String contactLink;
         private final List<String> bossIds;
         private final int requiredMembers;
         private final int currentMembers;
@@ -47,6 +49,7 @@ public class ReadPostListResult extends SelfValidating<ReadPostListResult> {
         public PostSummary(String id, String authorId, String authorNickname,
                            String characterId, String characterName, String characterImageUrl,
                            String worldGroup, String worldName,
+                           boolean guest, String contactLink,
                            List<String> bossIds, int requiredMembers, int currentMembers,
                            String preferredTime, String description, String status, String partyRoomId,
                            Instant createdAt, Instant updatedAt, Instant expiresAt) {
@@ -58,6 +61,8 @@ public class ReadPostListResult extends SelfValidating<ReadPostListResult> {
             this.characterImageUrl = characterImageUrl;
             this.worldGroup = worldGroup;
             this.worldName = worldName;
+            this.guest = guest;
+            this.contactLink = contactLink;
             this.bossIds = bossIds;
             this.requiredMembers = requiredMembers;
             this.currentMembers = currentMembers;

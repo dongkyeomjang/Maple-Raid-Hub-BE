@@ -8,7 +8,8 @@ public record UpdatePostRequestDto(
         String preferredTime,
         Boolean clearPreferredTime,
         String description,
-        Boolean clearDescription
+        Boolean clearDescription,
+        String guestPassword
 ) {
     public boolean shouldClearPreferredTime() {
         return Boolean.TRUE.equals(clearPreferredTime);

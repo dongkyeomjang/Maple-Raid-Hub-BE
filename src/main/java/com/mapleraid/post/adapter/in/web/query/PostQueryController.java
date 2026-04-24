@@ -4,17 +4,20 @@ import com.mapleraid.character.domain.type.EWorldGroup;
 import com.mapleraid.core.annotation.bean.CurrentUser;
 import com.mapleraid.core.dto.ResponseDto;
 import com.mapleraid.post.adapter.in.web.dto.response.ApplicationsResponseDto;
+import com.mapleraid.post.adapter.in.web.dto.response.GuestCharacterInfoResponseDto;
 import com.mapleraid.post.adapter.in.web.dto.response.MyApplicationsListResponseDto;
 import com.mapleraid.post.adapter.in.web.dto.response.PostDetailResponseDto;
 import com.mapleraid.post.adapter.in.web.dto.response.PostListResponseDto;
 import com.mapleraid.post.adapter.in.web.dto.response.PostResponseDto;
 import com.mapleraid.post.adapter.in.web.dto.response.ReadMyPostsResponseDto;
+import com.mapleraid.post.application.port.in.input.query.ReadGuestCharacterInfoInput;
 import com.mapleraid.post.application.port.in.input.query.ReadMyApplicationsInput;
 import com.mapleraid.post.application.port.in.input.query.ReadMyPostsInput;
 import com.mapleraid.post.application.port.in.input.query.ReadPostApplicationsInput;
 import com.mapleraid.post.application.port.in.input.query.ReadPostDetailInput;
 import com.mapleraid.post.application.port.in.input.query.ReadPostListInput;
 import com.mapleraid.post.application.port.in.output.result.ReadPostListResult;
+import com.mapleraid.post.application.port.in.usecase.ReadGuestCharacterInfoUseCase;
 import com.mapleraid.post.application.port.in.usecase.ReadMyApplicationsUseCase;
 import com.mapleraid.post.application.port.in.usecase.ReadMyPostsUseCase;
 import com.mapleraid.post.application.port.in.usecase.ReadPostApplicationsUseCase;
@@ -42,6 +45,7 @@ public class PostQueryController {
     private final ReadMyApplicationsUseCase readMyApplicationsUseCase;
     private final ReadMyPostsUseCase readMyPostsUseCase;
     private final ReadPostApplicationsUseCase readPostApplicationsUseCase;
+    private final ReadGuestCharacterInfoUseCase readGuestCharacterInfoUseCase;
 
     /**
      * 모집글 목록 조회하기
@@ -108,6 +112,23 @@ public class PostQueryController {
                 ReadMyPostsResponseDto.from(
                         readMyPostsUseCase.execute(
                                 ReadMyPostsInput.of(userId)
+                        )
+                )
+        );
+    }
+
+    /**
+     * 비회원 모집글 캐릭터 상세정보 (전투력/장비 등) 조회
+     * - 저장하지 않고 매 호출마다 Nexon API로 조회
+     */
+    @GetMapping("/{postId}/guest-character")
+    public ResponseDto<GuestCharacterInfoResponseDto> getGuestCharacterInfo(
+            @PathVariable String postId) {
+
+        return ResponseDto.ok(
+                GuestCharacterInfoResponseDto.from(
+                        readGuestCharacterInfoUseCase.execute(
+                                ReadGuestCharacterInfoInput.of(PostId.of(postId))
                         )
                 )
         );

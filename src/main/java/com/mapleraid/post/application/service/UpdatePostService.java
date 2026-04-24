@@ -12,6 +12,7 @@ import com.mapleraid.post.domain.Post;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ public class UpdatePostService implements UpdatePostUseCase {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CharacterRepository characterRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -29,8 +31,15 @@ public class UpdatePostService implements UpdatePostUseCase {
         Post post = postRepository.findById(input.getPostId())
                 .orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));
 
-        if (!post.isAuthor(input.getRequesterId())) {
-            throw new CommonException(ErrorCode.POST_NOT_AUTHOR);
+        if (post.isGuest()) {
+            if (input.getGuestPassword() == null
+                    || !passwordEncoder.matches(input.getGuestPassword(), post.getGuestPasswordHash())) {
+                throw new CommonException(ErrorCode.POST_GUEST_INVALID_PASSWORD);
+            }
+        } else {
+            if (input.getRequesterId() == null || !post.isAuthor(input.getRequesterId())) {
+                throw new CommonException(ErrorCode.POST_NOT_AUTHOR);
+            }
         }
 
         post.update(
@@ -44,12 +53,20 @@ public class UpdatePostService implements UpdatePostUseCase {
 
         Post savedPost = postRepository.save(post);
 
-        User author = userRepository.findById(savedPost.getAuthorId()).orElse(null);
-        Character character = characterRepository.findById(savedPost.getCharacterId()).orElse(null);
+        String authorNickname = null;
+        String characterName = null;
+        String characterImageUrl = null;
+        if (!savedPost.isGuest()) {
+            User author = userRepository.findById(savedPost.getAuthorId()).orElse(null);
+            Character character = characterRepository.findById(savedPost.getCharacterId()).orElse(null);
+            authorNickname = author != null ? author.getNickname() : null;
+            characterName = character != null ? character.getCharacterName() : null;
+            characterImageUrl = character != null ? character.getCharacterImageUrl() : null;
+        } else {
+            characterName = savedPost.getGuestCharacterName();
+            characterImageUrl = savedPost.getGuestCharacterImageUrl();
+        }
 
-        return UpdatePostResult.from(savedPost,
-                author != null ? author.getNickname() : null,
-                character != null ? character.getCharacterName() : null,
-                character != null ? character.getCharacterImageUrl() : null);
+        return UpdatePostResult.from(savedPost, authorNickname, characterName, characterImageUrl);
     }
 }

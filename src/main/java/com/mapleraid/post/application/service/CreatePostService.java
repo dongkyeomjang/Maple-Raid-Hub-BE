@@ -5,6 +5,7 @@ import com.mapleraid.character.domain.Character;
 import com.mapleraid.character.domain.type.EVerificationStatus;
 import com.mapleraid.core.exception.definition.ErrorCode;
 import com.mapleraid.core.exception.type.CommonException;
+import com.mapleraid.external.application.port.out.NexonApiPort;
 import com.mapleraid.post.application.port.in.input.command.CreatePostInput;
 import com.mapleraid.post.application.port.in.output.result.CreatePostResult;
 import com.mapleraid.post.application.port.in.usecase.CreatePostUseCase;
@@ -13,6 +14,7 @@ import com.mapleraid.post.domain.Post;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +25,19 @@ public class CreatePostService implements CreatePostUseCase {
     private final PostRepository postRepository;
     private final CharacterRepository characterRepository;
     private final UserRepository userRepository;
+    private final NexonApiPort nexonApiPort;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public CreatePostResult execute(CreatePostInput input) {
+        if (input.isGuest()) {
+            return createGuestPost(input);
+        }
+        return createMemberPost(input);
+    }
+
+    private CreatePostResult createMemberPost(CreatePostInput input) {
         Character character = characterRepository.findById(input.getCharacterId())
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_CHARACTER));
 
@@ -55,6 +66,44 @@ public class CreatePostService implements CreatePostUseCase {
         return CreatePostResult.from(savedPost,
                 author != null ? author.getNickname() : null,
                 character.getCharacterName(),
-                character.getCharacterImageUrl());
+                character.getCharacterImageUrl(),
+                character.getWorldName());
+    }
+
+    private CreatePostResult createGuestPost(CreatePostInput input) {
+        if (input.getGuestPassword() == null || input.getGuestPassword().isBlank()) {
+            throw new CommonException(ErrorCode.POST_GUEST_REQUIRES_PASSWORD);
+        }
+
+        // Nexon API로 캐릭터 존재 여부 확인 및 아바타 획득
+        String ocid = nexonApiPort.resolveOcid(input.getGuestCharacterName(), input.getGuestWorldName())
+                .orElseThrow(() -> new CommonException(ErrorCode.POST_GUEST_CHARACTER_NOT_FOUND));
+
+        NexonApiPort.CharacterBasicInfo basic = nexonApiPort.getCharacterBasic(ocid)
+                .orElseThrow(() -> new CommonException(ErrorCode.POST_GUEST_CHARACTER_NOT_FOUND));
+
+        // 입력한 월드와 실제 월드 불일치 검증
+        if (basic.worldName() != null && !basic.worldName().equalsIgnoreCase(input.getGuestWorldName())) {
+            throw new CommonException(ErrorCode.CHARACTER_WORLD_MISMATCH);
+        }
+
+        String passwordHash = passwordEncoder.encode(input.getGuestPassword());
+
+        Post post = Post.createGuest(
+                input.getGuestWorldGroup(),
+                basic.worldName() != null ? basic.worldName() : input.getGuestWorldName(),
+                basic.characterName() != null ? basic.characterName() : input.getGuestCharacterName(),
+                basic.characterImage(),
+                input.getContactLink(),
+                passwordHash,
+                input.getBossIds(),
+                input.getRequiredMembers(),
+                input.getPreferredTime(),
+                input.getDescription()
+        );
+
+        Post savedPost = postRepository.save(post);
+
+        return CreatePostResult.from(savedPost, null, null, null, null);
     }
 }

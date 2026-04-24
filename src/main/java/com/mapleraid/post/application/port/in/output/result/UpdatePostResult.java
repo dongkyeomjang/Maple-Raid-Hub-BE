@@ -58,9 +58,9 @@ public class UpdatePostResult extends SelfValidating<UpdatePostResult> {
     public static UpdatePostResult from(Post post, String authorNickname, String characterName, String characterImageUrl) {
         return new UpdatePostResult(
                 post.getId().getValue().toString(),
-                post.getAuthorId().getValue().toString(),
+                post.getAuthorId() != null ? post.getAuthorId().getValue().toString() : null,
                 authorNickname,
-                post.getCharacterId().getValue().toString(),
+                post.getCharacterId() != null ? post.getCharacterId().getValue().toString() : null,
                 characterName,
                 characterImageUrl,
                 post.getWorldGroup().name(),

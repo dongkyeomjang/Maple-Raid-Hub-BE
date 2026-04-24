@@ -14,7 +14,10 @@ public record PostDetailResponseDto(
     public static PostDetailResponseDto from(ReadPostDetailResult result) {
         PostInfo post = new PostInfo(
                 result.getId(), result.getAuthorId(), result.getCharacterId(),
-                result.getWorldGroup(), result.getBossIds(), result.getRequiredMembers(),
+                result.getWorldGroup(),
+                result.isGuest(), result.getGuestWorldName(), result.getGuestCharacterName(),
+                result.getGuestCharacterImageUrl(), result.getContactLink(),
+                result.getBossIds(), result.getRequiredMembers(),
                 result.getCurrentMembers(), result.getPreferredTime(), result.getDescription(),
                 result.getStatus(), result.getPartyRoomId(),
                 result.getCreatedAt(), result.getUpdatedAt());
@@ -43,6 +46,11 @@ public record PostDetailResponseDto(
             String authorId,
             String characterId,
             String worldGroup,
+            boolean guest,
+            String guestWorldName,
+            String guestCharacterName,
+            String guestCharacterImageUrl,
+            String contactLink,
             List<String> bossIds,
             int requiredMembers,
             int currentMembers,

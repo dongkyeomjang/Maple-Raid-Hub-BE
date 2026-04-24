@@ -9,6 +9,7 @@ import com.mapleraid.post.application.port.in.usecase.DeletePostUseCase;
 import com.mapleraid.post.application.port.out.PostRepository;
 import com.mapleraid.post.domain.Post;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class DeletePostService implements DeletePostUseCase {
 
     private final PostRepository postRepository;
     private final PartyRoomRepository partyRoomRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -25,7 +27,18 @@ public class DeletePostService implements DeletePostUseCase {
         Post post = postRepository.findById(input.getPostId())
                 .orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));
 
-        if (!post.isAuthor(input.getRequesterId())) {
+        if (post.isGuest()) {
+            if (input.getGuestPassword() == null
+                    || !passwordEncoder.matches(input.getGuestPassword(), post.getGuestPasswordHash())) {
+                throw new CommonException(ErrorCode.POST_GUEST_INVALID_PASSWORD);
+            }
+            // 비회원 글은 파티룸이 생성될 일이 없으니 곧바로 취소
+            post.cancel();
+            postRepository.save(post);
+            return;
+        }
+
+        if (input.getRequesterId() == null || !post.isAuthor(input.getRequesterId())) {
             throw new CommonException(ErrorCode.POST_NOT_AUTHOR);
         }
 

@@ -1,12 +1,12 @@
 package com.mapleraid.post.application.port.in.input.command;
 
 import com.mapleraid.character.domain.CharacterId;
+import com.mapleraid.character.domain.type.EWorldGroup;
 import com.mapleraid.core.dto.SelfValidating;
 import com.mapleraid.user.domain.UserId;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.util.List;
@@ -14,11 +14,17 @@ import java.util.List;
 @Getter
 public class CreatePostInput extends SelfValidating<CreatePostInput> {
 
-    @NotNull(message = "작성자 아이디는 필수입니다.")
+    // 회원 작성 시
     private final UserId authorId;
-
-    @NotNull(message = "캐릭터 아이디는 필수입니다.")
     private final CharacterId characterId;
+
+    // 비회원 작성 시
+    private final boolean guest;
+    private final EWorldGroup guestWorldGroup;
+    private final String guestWorldName;
+    private final String guestCharacterName;
+    private final String contactLink;
+    private final String guestPassword;
 
     @NotEmpty(message = "최소 1개 이상의 보스를 선택해야 합니다.")
     private final List<String> bossIds;
@@ -31,10 +37,19 @@ public class CreatePostInput extends SelfValidating<CreatePostInput> {
 
     private final String description;
 
-    private CreatePostInput(UserId authorId, CharacterId characterId, List<String> bossIds,
-                            int requiredMembers, String preferredTime, String description) {
+    private CreatePostInput(UserId authorId, CharacterId characterId,
+                            boolean guest, EWorldGroup guestWorldGroup, String guestWorldName,
+                            String guestCharacterName, String contactLink, String guestPassword,
+                            List<String> bossIds, int requiredMembers,
+                            String preferredTime, String description) {
         this.authorId = authorId;
         this.characterId = characterId;
+        this.guest = guest;
+        this.guestWorldGroup = guestWorldGroup;
+        this.guestWorldName = guestWorldName;
+        this.guestCharacterName = guestCharacterName;
+        this.contactLink = contactLink;
+        this.guestPassword = guestPassword;
         this.bossIds = bossIds;
         this.requiredMembers = requiredMembers;
         this.preferredTime = preferredTime;
@@ -44,6 +59,18 @@ public class CreatePostInput extends SelfValidating<CreatePostInput> {
 
     public static CreatePostInput of(UserId authorId, CharacterId characterId, List<String> bossIds,
                                      int requiredMembers, String preferredTime, String description) {
-        return new CreatePostInput(authorId, characterId, bossIds, requiredMembers, preferredTime, description);
+        return new CreatePostInput(authorId, characterId,
+                false, null, null, null, null, null,
+                bossIds, requiredMembers, preferredTime, description);
+    }
+
+    public static CreatePostInput ofGuest(EWorldGroup guestWorldGroup, String guestWorldName,
+                                          String guestCharacterName, String contactLink,
+                                          String guestPassword,
+                                          List<String> bossIds, int requiredMembers,
+                                          String preferredTime, String description) {
+        return new CreatePostInput(null, null,
+                true, guestWorldGroup, guestWorldName, guestCharacterName, contactLink, guestPassword,
+                bossIds, requiredMembers, preferredTime, description);
     }
 }

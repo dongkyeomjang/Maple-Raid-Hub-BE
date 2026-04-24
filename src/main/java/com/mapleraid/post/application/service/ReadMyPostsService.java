@@ -36,7 +36,7 @@ public class ReadMyPostsService implements ReadMyPostsUseCase {
     public ReadMyPostsResult execute(ReadMyPostsInput input) {
         List<Post> posts = new java.util.ArrayList<>(postRepository.findByAuthorId(input.getUserId()));
 
-        // Collect IDs for batch fetch
+        // 내 글이므로 모두 회원 글 (guest 글은 포함되지 않음)
         Set<CharacterId> charIds = posts.stream()
                 .map(Post::getCharacterId)
                 .collect(Collectors.toSet());
@@ -45,17 +45,14 @@ public class ReadMyPostsService implements ReadMyPostsUseCase {
                 .distinct()
                 .toList();
 
-        // Batch fetch users and characters
         Map<UserId, User> userMap = userRepository.findAllByIds(userIds);
         Map<CharacterId, Character> charMap = characterRepository.findByIds(charIds).stream()
                 .collect(Collectors.toMap(Character::getId, c -> c));
 
-        // RECRUITING 먼저, 나머지는 뒤로 (각 그룹 내에서는 createdAt DESC 유지)
         posts.sort(Comparator
                 .comparing((Post p) -> p.getStatus() != PostStatus.RECRUITING ? 1 : 0)
                 .thenComparing(Post::getCreatedAt, Comparator.reverseOrder()));
 
-        // Build summaries with enriched data
         List<ReadMyPostsResult.PostSummary> summaries = posts.stream()
                 .map(post -> {
                     User author = userMap.get(post.getAuthorId());
@@ -72,6 +69,8 @@ public class ReadMyPostsService implements ReadMyPostsUseCase {
                             character != null ? character.getCharacterImageUrl() : null,
                             post.getWorldGroup().name(),
                             character != null ? character.getWorldName() : null,
+                            false,
+                            null,
                             post.getBossIds(),
                             post.getRequiredMembers(),
                             post.getCurrentMembers(),
