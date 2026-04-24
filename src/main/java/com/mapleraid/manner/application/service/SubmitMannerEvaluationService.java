@@ -27,12 +27,14 @@ public class SubmitMannerEvaluationService implements SubmitMannerEvaluationUseC
 
     private static final Duration EVALUATION_COOLDOWN = Duration.ofDays(30);
     private static final BigDecimal BASE_TEMPERATURE = new BigDecimal("36.5");
-    private static final BigDecimal MAX_UP = new BigDecimal("62.5");   // 36.5 + 62.5 = 99
-    private static final BigDecimal MAX_DOWN = new BigDecimal("36.5"); // 36.5 - 36.5 = 0
-    private static final double CONFIDENCE_K = 35.0;          // Hill 함수 반포화점 (35회 평가 시 신뢰도 50%)
+    // 긍정 방향 상승폭 대폭 확대: 100 (User.clampTemperature 에서 99로 상한됨 → 실질 +62.5)
+    private static final BigDecimal MAX_UP = new BigDecimal("100.0");
+    // 부정 방향 하락폭 확대: 80.0 (User.clampTemperature 에서 0으로 하한 유지됨)
+    private static final BigDecimal MAX_DOWN = new BigDecimal("80.0");
+    private static final double CONFIDENCE_K = 10.0;          // Hill 함수 반포화점 (10회 평가 시 신뢰도 50%, 매우 드문 평가에도 체감)
     private static final double HILL_COEFFICIENT = 2.0;       // Hill 계수 (S-커브: 초반 완만, 중반 급등, 후반 수렴)
-    private static final double POSITIVE_EVAL_WEIGHT = 1.0;   // 긍정 평가 1회 가중치
-    private static final double NEGATIVE_EVAL_WEIGHT = 1.5;   // 부정 평가 1회 가중치 (더 무겁게)
+    private static final double POSITIVE_EVAL_WEIGHT = 1.5;   // 긍정 평가 1회 가중치 (부정과 동등, 기존 1.0)
+    private static final double NEGATIVE_EVAL_WEIGHT = 1.5;   // 부정 평가 1회 가중치
 
     private final MannerEvaluationRepository mannerEvaluationRepository;
     private final UserRepository userRepository;
