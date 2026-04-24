@@ -6,6 +6,7 @@ import com.mapleraid.character.domain.type.EVerificationStatus;
 import com.mapleraid.core.exception.definition.ErrorCode;
 import com.mapleraid.core.exception.type.CommonException;
 import com.mapleraid.external.application.port.out.NexonApiPort;
+import com.mapleraid.notification.application.event.GuestPostCreatedEvent;
 import com.mapleraid.post.application.port.in.input.command.CreatePostInput;
 import com.mapleraid.post.application.port.in.output.result.CreatePostResult;
 import com.mapleraid.post.application.port.in.usecase.CreatePostUseCase;
@@ -14,6 +15,7 @@ import com.mapleraid.post.domain.Post;
 import com.mapleraid.user.application.port.out.UserRepository;
 import com.mapleraid.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,7 @@ public class CreatePostService implements CreatePostUseCase {
     private final UserRepository userRepository;
     private final NexonApiPort nexonApiPort;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -111,6 +114,16 @@ public class CreatePostService implements CreatePostUseCase {
         );
 
         Post savedPost = postRepository.save(post);
+
+        // 비회원 글은 모니터링 필요 → 관리자에게 Discord DM 발송
+        eventPublisher.publishEvent(new GuestPostCreatedEvent(
+                savedPost.getId().getValue().toString(),
+                savedPost.getGuestWorldName(),
+                savedPost.getGuestCharacterName(),
+                savedPost.getContactLink(),
+                savedPost.getDescription(),
+                savedPost.getBossIds()
+        ));
 
         return CreatePostResult.from(savedPost, null, null, null, null);
     }

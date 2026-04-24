@@ -53,7 +53,9 @@ public class Constants {
             "/api/posts",
             "/api/posts/*",
             "/api/posts/*/applications",
-            "/api/posts/*/guest-character"
+            "/api/posts/*/guest-character",
+            // 관리자 Discord DM 링크 버튼 콜백 (HMAC 서명으로 별도 검증)
+            "/api/admin/guest-posts/*/cancel"
     );
 
     /**
