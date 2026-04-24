@@ -69,6 +69,7 @@ public enum ErrorCode {
     POST_GUEST_CHARACTER_NOT_FOUND(40053, HttpStatus.BAD_REQUEST, "입력한 캐릭터를 찾을 수 없습니다. 월드와 캐릭터명을 다시 확인해주세요."),
     POST_GUEST_REQUIRES_PASSWORD(40054, HttpStatus.BAD_REQUEST, "비회원 모집글에는 비밀번호가 필요합니다."),
     POST_GUEST_INVALID_PASSWORD(40055, HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    POST_GUEST_CHARACTER_ALREADY_CLAIMED(40056, HttpStatus.BAD_REQUEST, "이미 다른 회원이 소유자 인증을 완료한 캐릭터입니다. 사칭 방지를 위해 비회원 모집글을 작성할 수 없습니다. 본인 캐릭터라면 로그인 후 인증해주세요."),
 
     // Access Denied Error
     ACCESS_DENIED(40300, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),

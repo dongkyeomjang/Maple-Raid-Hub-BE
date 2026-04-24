@@ -87,6 +87,14 @@ public class CreatePostService implements CreatePostUseCase {
             throw new CommonException(ErrorCode.CHARACTER_WORLD_MISMATCH);
         }
 
+        // 사칭 방지: 이미 인증 회원이 소유 인증을 완료한 캐릭터는 비회원 글로 작성 불가
+        String resolvedCharacterName = basic.characterName() != null ? basic.characterName() : input.getGuestCharacterName();
+        String resolvedWorldName = basic.worldName() != null ? basic.worldName() : input.getGuestWorldName();
+        if (characterRepository.existsByNameAndWorldAndStatus(
+                resolvedCharacterName, resolvedWorldName, EVerificationStatus.VERIFIED_OWNER)) {
+            throw new CommonException(ErrorCode.POST_GUEST_CHARACTER_ALREADY_CLAIMED);
+        }
+
         String passwordHash = passwordEncoder.encode(input.getGuestPassword());
 
         Post post = Post.createGuest(
