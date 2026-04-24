@@ -37,6 +37,8 @@ public interface PostRepository {
 
     List<Post> findExpiredRecruiting(Instant now);
 
+    List<Post> findGuestByStatusAndClosedAtBefore(PostStatus status, Instant before);
+
     List<Application> findApplicationsByApplicantId(UserId applicantId);
 
     List<Post> findByAuthorId(UserId authorId);

@@ -105,6 +105,13 @@ public class PostPersistenceAdapter implements PostRepository {
     }
 
     @Override
+    public List<Post> findGuestByStatusAndClosedAtBefore(PostStatus status, Instant before) {
+        return jpaRepository.findGuestByStatusAndClosedAtBefore(status, before).stream()
+                .map(PostJpaEntity::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<Application> findApplicationsByApplicantId(UserId applicantId) {
         return jpaRepository.findByApplicationsApplicantId(
                         applicantId.getValue().toString())

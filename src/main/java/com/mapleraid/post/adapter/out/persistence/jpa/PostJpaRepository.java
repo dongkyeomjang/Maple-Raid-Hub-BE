@@ -73,6 +73,11 @@ public interface PostJpaRepository extends JpaRepository<PostJpaEntity, String> 
     @Query("SELECT DISTINCT p FROM PostJpaEntity p LEFT JOIN FETCH p.applications WHERE p.status = 'RECRUITING' AND p.expiresAt < :now")
     List<PostJpaEntity> findExpiredRecruiting(@Param("now") Instant now);
 
+    @Query("SELECT p FROM PostJpaEntity p WHERE p.guest = true AND p.status = :status AND p.closedAt < :before")
+    List<PostJpaEntity> findGuestByStatusAndClosedAtBefore(
+            @Param("status") PostStatus status,
+            @Param("before") Instant before);
+
     @Query("SELECT DISTINCT p FROM PostJpaEntity p LEFT JOIN FETCH p.applications a WHERE a.applicantId = :applicantId")
     List<PostJpaEntity> findByApplicationsApplicantId(@Param("applicantId") String applicantId);
 
