@@ -63,6 +63,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(configurer -> configurer
                         .requestMatchers(Constants.NO_NEED_AUTH_URLS.toArray(String[]::new)).permitAll()
                         .requestMatchers(HttpMethod.GET, Constants.NO_NEED_AUTH_GET_URLS.toArray(String[]::new)).permitAll()
+                        .requestMatchers(HttpMethod.POST, Constants.NO_NEED_AUTH_POST_URLS.toArray(String[]::new)).permitAll()
+                        .requestMatchers(HttpMethod.PATCH, Constants.NO_NEED_AUTH_PATCH_URLS.toArray(String[]::new)).permitAll()
+                        .requestMatchers(HttpMethod.DELETE, Constants.NO_NEED_AUTH_DELETE_URLS.toArray(String[]::new)).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -114,6 +117,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(configurer -> configurer
                         .requestMatchers(Constants.NO_NEED_AUTH_URLS.toArray(String[]::new)).permitAll()
                         .requestMatchers(HttpMethod.GET, Constants.NO_NEED_AUTH_GET_URLS.toArray(String[]::new)).permitAll()
+                        .requestMatchers(HttpMethod.POST, Constants.NO_NEED_AUTH_POST_URLS.toArray(String[]::new)).permitAll()
+                        .requestMatchers(HttpMethod.PATCH, Constants.NO_NEED_AUTH_PATCH_URLS.toArray(String[]::new)).permitAll()
+                        .requestMatchers(HttpMethod.DELETE, Constants.NO_NEED_AUTH_DELETE_URLS.toArray(String[]::new)).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )

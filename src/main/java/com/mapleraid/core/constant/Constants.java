@@ -52,6 +52,32 @@ public class Constants {
     public static List<String> NO_NEED_AUTH_GET_URLS = List.of(
             "/api/posts",
             "/api/posts/*",
-            "/api/posts/*/applications"
+            "/api/posts/*/applications",
+            "/api/posts/*/guest-character"
+    );
+
+    /**
+     * POST 요청만 인증 없이 허용되는 URL
+     * - 비회원 모집글 작성 및 비밀번호 검증 지원
+     */
+    public static List<String> NO_NEED_AUTH_POST_URLS = List.of(
+            "/api/posts",
+            "/api/posts/*/guest-verify"
+    );
+
+    /**
+     * PATCH 요청만 인증 없이 허용되는 URL
+     * - 비회원 모집글 수정 (컨트롤러에서 비밀번호 검증)
+     */
+    public static List<String> NO_NEED_AUTH_PATCH_URLS = List.of(
+            "/api/posts/*"
+    );
+
+    /**
+     * DELETE 요청만 인증 없이 허용되는 URL
+     * - 비회원 모집글 취소 (컨트롤러에서 비밀번호 검증)
+     */
+    public static List<String> NO_NEED_AUTH_DELETE_URLS = List.of(
+            "/api/posts/*"
     );
 }

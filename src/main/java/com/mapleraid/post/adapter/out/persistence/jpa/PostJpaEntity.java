@@ -37,10 +37,10 @@ public class PostJpaEntity {
     @Column(name = "id", length = 36)
     private String id;
 
-    @Column(name = "author_id", nullable = false, length = 36)
+    @Column(name = "author_id", length = 36)
     private String authorId;
 
-    @Column(name = "character_id", nullable = false, length = 36)
+    @Column(name = "character_id", length = 36)
     private String characterId;
 
     @Enumerated(EnumType.STRING)
@@ -71,6 +71,24 @@ public class PostJpaEntity {
     @Column(name = "party_room_id", length = 36)
     private String partyRoomId;
 
+    @Column(name = "is_guest", nullable = false)
+    private boolean guest;
+
+    @Column(name = "guest_world_name", length = 50)
+    private String guestWorldName;
+
+    @Column(name = "guest_character_name", length = 50)
+    private String guestCharacterName;
+
+    @Column(name = "guest_character_image_url", length = 2048)
+    private String guestCharacterImageUrl;
+
+    @Column(name = "contact_link", length = 500)
+    private String contactLink;
+
+    @Column(name = "guest_password_hash", length = 100)
+    private String guestPasswordHash;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -89,8 +107,8 @@ public class PostJpaEntity {
     public static PostJpaEntity fromDomain(Post post) {
         PostJpaEntity entity = new PostJpaEntity();
         entity.id = post.getId().getValue().toString();
-        entity.authorId = post.getAuthorId().getValue().toString();
-        entity.characterId = post.getCharacterId().getValue().toString();
+        entity.authorId = post.getAuthorId() != null ? post.getAuthorId().getValue().toString() : null;
+        entity.characterId = post.getCharacterId() != null ? post.getCharacterId().getValue().toString() : null;
         entity.worldGroup = post.getWorldGroup();
         entity.bossIds = new ArrayList<>(post.getBossIds());
         entity.requiredMembers = post.getRequiredMembers();
@@ -99,6 +117,12 @@ public class PostJpaEntity {
         entity.description = post.getDescription();
         entity.status = post.getStatus();
         entity.partyRoomId = post.getPartyRoomId() != null ? post.getPartyRoomId().getValue().toString() : null;
+        entity.guest = post.isGuest();
+        entity.guestWorldName = post.getGuestWorldName();
+        entity.guestCharacterName = post.getGuestCharacterName();
+        entity.guestCharacterImageUrl = post.getGuestCharacterImageUrl();
+        entity.contactLink = post.getContactLink();
+        entity.guestPasswordHash = post.getGuestPasswordHash();
         entity.createdAt = post.getCreatedAt();
         entity.updatedAt = post.getUpdatedAt();
         entity.expiresAt = post.getExpiresAt();
@@ -119,8 +143,8 @@ public class PostJpaEntity {
 
         return Post.reconstitute(
                 PostId.of(id),
-                UserId.of(authorId),
-                CharacterId.of(characterId),
+                authorId != null ? UserId.of(authorId) : null,
+                characterId != null ? CharacterId.of(characterId) : null,
                 worldGroup,
                 new ArrayList<>(bossIds),
                 requiredMembers,
@@ -129,6 +153,12 @@ public class PostJpaEntity {
                 description,
                 status,
                 partyRoomId != null ? PartyRoomId.of(partyRoomId) : null,
+                guest,
+                guestWorldName,
+                guestCharacterName,
+                guestCharacterImageUrl,
+                contactLink,
+                guestPasswordHash,
                 createdAt,
                 updatedAt,
                 expiresAt,

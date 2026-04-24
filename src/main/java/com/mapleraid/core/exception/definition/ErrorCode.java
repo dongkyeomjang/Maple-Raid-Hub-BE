@@ -62,6 +62,13 @@ public enum ErrorCode {
     RECOVERY_NO_VERIFIED_CHARACTER(40046, HttpStatus.BAD_REQUEST, "해당 캐릭터명/월드로 인증된 캐릭터를 찾을 수 없습니다."),
     RECOVERY_OAUTH_USER(40047, HttpStatus.BAD_REQUEST, "소셜 로그인 계정은 아이디/비밀번호 찾기를 사용할 수 없습니다."),
     RECOVERY_INVALID_TOKEN(40048, HttpStatus.BAD_REQUEST, "유효하지 않은 복구 토큰입니다."),
+    POST_GUEST_CANNOT_APPLY(40049, HttpStatus.BAD_REQUEST, "비회원 모집글에는 지원할 수 없습니다. 작성자에게 직접 연락해주세요."),
+    POST_GUEST_REQUIRES_CONTACT(40050, HttpStatus.BAD_REQUEST, "비회원 모집글에는 연락수단을 입력해야 합니다."),
+    POST_NOT_GUEST(40051, HttpStatus.BAD_REQUEST, "비회원 모집글이 아닙니다."),
+    POST_GUEST_FORBIDDEN_FOR_MEMBER(40052, HttpStatus.BAD_REQUEST, "로그인한 상태에서는 비회원 모집글을 작성할 수 없습니다."),
+    POST_GUEST_CHARACTER_NOT_FOUND(40053, HttpStatus.BAD_REQUEST, "입력한 캐릭터를 찾을 수 없습니다. 월드와 캐릭터명을 다시 확인해주세요."),
+    POST_GUEST_REQUIRES_PASSWORD(40054, HttpStatus.BAD_REQUEST, "비회원 모집글에는 비밀번호가 필요합니다."),
+    POST_GUEST_INVALID_PASSWORD(40055, HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
     // Access Denied Error
     ACCESS_DENIED(40300, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),

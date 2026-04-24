@@ -22,8 +22,8 @@ public class Post {
     private static final Duration DEFAULT_EXPIRY = Duration.ofDays(7);
 
     private final PostId id;
-    private final UserId authorId;
-    private final CharacterId characterId;
+    private final UserId authorId; // nullable: 비회원 모집글이면 null
+    private final CharacterId characterId; // nullable: 비회원 모집글이면 null
     // World Group
     private final EWorldGroup EWorldGroup;
     // Applications (part of aggregate)
@@ -38,6 +38,13 @@ public class Post {
     // Status
     private PostStatus status;
     private PartyRoomId partyRoomId;
+    // Guest-only fields
+    private boolean guest;
+    private String guestWorldName;
+    private String guestCharacterName;
+    private String guestCharacterImageUrl;
+    private String contactLink;
+    private String guestPasswordHash;
     // Timestamps
     private Instant createdAt;
     private Instant updatedAt;
@@ -46,8 +53,8 @@ public class Post {
 
     private Post(PostId id, UserId authorId, CharacterId characterId, EWorldGroup EWorldGroup) {
         this.id = Objects.requireNonNull(id);
-        this.authorId = Objects.requireNonNull(authorId);
-        this.characterId = Objects.requireNonNull(characterId);
+        this.authorId = authorId;
+        this.characterId = characterId;
         this.EWorldGroup = Objects.requireNonNull(EWorldGroup);
         this.status = PostStatus.RECRUITING;
         this.currentMembers = 1; // 작성자 포함
@@ -59,14 +66,9 @@ public class Post {
     public static Post create(UserId authorId, CharacterId characterId, EWorldGroup EWorldGroup,
                               List<String> bossIds, int requiredMembers,
                               String preferredTime, String description) {
-        // 최소 1개 이상의 보스 선택 필수
-        if (bossIds == null || bossIds.isEmpty()) {
-            throw new CommonException(ErrorCode.POST_NO_BOSS_SELECTED);
-        }
-
-        if (requiredMembers < 2 || requiredMembers > 6) {
-            throw new CommonException(ErrorCode.POST_INVALID_MEMBER_COUNT);
-        }
+        Objects.requireNonNull(authorId, "authorId");
+        Objects.requireNonNull(characterId, "characterId");
+        validateCommon(bossIds, requiredMembers);
 
         Post post = new Post(PostId.generate(), authorId, characterId, EWorldGroup);
         post.bossIds = new ArrayList<>(bossIds);
@@ -76,11 +78,56 @@ public class Post {
         return post;
     }
 
+    public static Post createGuest(EWorldGroup EWorldGroup,
+                                   String guestWorldName, String guestCharacterName,
+                                   String guestCharacterImageUrl, String contactLink,
+                                   String guestPasswordHash,
+                                   List<String> bossIds, int requiredMembers,
+                                   String preferredTime, String description) {
+        if (guestWorldName == null || guestWorldName.isBlank()) {
+            throw new CommonException(ErrorCode.INVALID_WORLD);
+        }
+        if (guestCharacterName == null || guestCharacterName.isBlank()) {
+            throw new CommonException(ErrorCode.NOT_FOUND_CHARACTER);
+        }
+        if (contactLink == null || contactLink.isBlank()) {
+            throw new CommonException(ErrorCode.POST_GUEST_REQUIRES_CONTACT);
+        }
+        if (guestPasswordHash == null || guestPasswordHash.isBlank()) {
+            throw new CommonException(ErrorCode.POST_GUEST_REQUIRES_PASSWORD);
+        }
+        validateCommon(bossIds, requiredMembers);
+
+        Post post = new Post(PostId.generate(), null, null, EWorldGroup);
+        post.guest = true;
+        post.guestWorldName = guestWorldName;
+        post.guestCharacterName = guestCharacterName;
+        post.guestCharacterImageUrl = guestCharacterImageUrl;
+        post.contactLink = contactLink;
+        post.guestPasswordHash = guestPasswordHash;
+        post.bossIds = new ArrayList<>(bossIds);
+        post.requiredMembers = requiredMembers;
+        post.preferredTime = preferredTime;
+        post.description = description;
+        return post;
+    }
+
+    private static void validateCommon(List<String> bossIds, int requiredMembers) {
+        if (bossIds == null || bossIds.isEmpty()) {
+            throw new CommonException(ErrorCode.POST_NO_BOSS_SELECTED);
+        }
+        if (requiredMembers < 2 || requiredMembers > 6) {
+            throw new CommonException(ErrorCode.POST_INVALID_MEMBER_COUNT);
+        }
+    }
+
     public static Post reconstitute(
             PostId id, UserId authorId, CharacterId characterId, EWorldGroup EWorldGroup,
             List<String> bossIds, int requiredMembers, int currentMembers,
             String preferredTime, String description,
             PostStatus status, PartyRoomId partyRoomId,
+            boolean guest, String guestWorldName, String guestCharacterName,
+            String guestCharacterImageUrl, String contactLink, String guestPasswordHash,
             Instant createdAt, Instant updatedAt, Instant expiresAt, Instant closedAt,
             List<Application> applications) {
         Post post = new Post(id, authorId, characterId, EWorldGroup);
@@ -91,6 +138,12 @@ public class Post {
         post.description = description;
         post.status = status;
         post.partyRoomId = partyRoomId;
+        post.guest = guest;
+        post.guestWorldName = guestWorldName;
+        post.guestCharacterName = guestCharacterName;
+        post.guestCharacterImageUrl = guestCharacterImageUrl;
+        post.contactLink = contactLink;
+        post.guestPasswordHash = guestPasswordHash;
         post.createdAt = createdAt;
         post.updatedAt = updatedAt;
         post.expiresAt = expiresAt;
@@ -106,8 +159,13 @@ public class Post {
      */
     public Application apply(UserId applicantId, CharacterId applicantCharacterId,
                              EWorldGroup applicantEWorldGroup, String message) {
+        // 비회원 모집글에는 지원 불가 (정보 전달용)
+        if (guest) {
+            throw new CommonException(ErrorCode.POST_GUEST_CANNOT_APPLY);
+        }
+
         // 본인 모집글에 지원 불가
-        if (authorId.equals(applicantId)) {
+        if (authorId != null && authorId.equals(applicantId)) {
             throw new CommonException(ErrorCode.APPLICATION_SELF_APPLY);
         }
 
@@ -334,7 +392,15 @@ public class Post {
     }
 
     public boolean isAuthor(UserId userId) {
-        return authorId.equals(userId);
+        return authorId != null && userId != null && authorId.equals(userId);
+    }
+
+    public boolean isGuest() {
+        return guest;
+    }
+
+    public String getGuestPasswordHash() {
+        return guestPasswordHash;
     }
 
     // Getters
@@ -380,6 +446,22 @@ public class Post {
 
     public PartyRoomId getPartyRoomId() {
         return partyRoomId;
+    }
+
+    public String getGuestWorldName() {
+        return guestWorldName;
+    }
+
+    public String getGuestCharacterName() {
+        return guestCharacterName;
+    }
+
+    public String getGuestCharacterImageUrl() {
+        return guestCharacterImageUrl;
+    }
+
+    public String getContactLink() {
+        return contactLink;
     }
 
     public Instant getCreatedAt() {
